@@ -6,15 +6,15 @@ https://graphics.pixar.com/library/WrapperSIGGRAPH2019/paper.pdf
 
 I want to write a piece of code that takes two meshes as inputs, one will be the source model and one the target. 
 The source model will wrap around the target while accurately resembling the patch layout of the source mesh.
-Curves will be placed on both models to guide the wrap optimization. (maybe I should start with points first and see if I can build out to curves as points are easier to interpret?)
+Curves will be placed on both models to guide the wrap optimization.
 
-**plan:
+plan:
 - Map out the source mesh, using barycentric coordinates to map all given points relative to the guidance curves
 - Discretize all given curves on source model (pre determinted) 
 - project point obtained during discretizing from source curve to target curve along the vector direction
 - using the source curves to define the fixed boundary points, we can use the geometry of the target mesh and the barycentric information form the source to calculate discrete laplacians (e.g. contangent weights for surface meshes) 
 - solve for interior points 
-- validate that the resulting topology respects the initial mapping and constraints**
+- validate that the resulting topology respects the initial mapping and constraints
 
 
 
