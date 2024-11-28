@@ -33,6 +33,8 @@ FUNCTION loadMeshes(inputMesh_x, inputMesh_y)
 
 
 //https://github.com/assimp/assimp //libray to convert mesh files //CGAL libary, easier to use than assimp //https://doc.cgal.org/latest/Manual/packages.html#PartGeometryProcessing
+//CGAL libary works best with OFF format
+
 FUNCTION convertX(inputMesh_x)
     if format works with assimp
         use assimp libary to convert inputMesh to a easy to read file

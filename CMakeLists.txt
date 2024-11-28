@@ -14,8 +14,11 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 # Now we add our target executable and the file it is built from.
 add_executable(Wrap)
-target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_SOURCE_DIR}/src/Wrap.cpp include/Wrap.h ${CMAKE_SOURCE_DIR}/src/Convert.cpp include/Convert.h)
-target_link_libraries(Particle PRIVATE  fmt::fmt-header-only)
+target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_SOURCE_DIR}/src/Wrap.cpp include/Wrap.h 
+               ${CMAKE_SOURCE_DIR}/src/Convert.cpp ${CMAKE_SOURCE_DIR}/include/Convert.h)
+
+
+target_link_libraries(Wrap PRIVATE  fmt::fmt-header-only)
 
 #################################################################################
 # Testing code
@@ -24,12 +27,15 @@ target_link_libraries(Particle PRIVATE  fmt::fmt-header-only)
 find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 enable_testing()
-add_executable(ParticleTests)
-target_sources(WrapTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/WrapTests.cpp
+add_executable(ConvertTests)
+
+target_sources(ConvertTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/WrapTests.cpp
+                                 ${CMAKE_SOURCE_DIR}/tests/ConvertTests.cpp
                                 ${CMAKE_SOURCE_DIR}/src/Wrap.cpp
                                 ${CMAKE_SOURCE_DIR}/include/Wrap.h
                                 ${CMAKE_SOURCE_DIR}/include/Convert.h
                                 ${CMAKE_SOURCE_DIR}/src/Convert.cpp
 )
-target_link_libraries(WrapTests PRIVATE GTest::gtest GTest::gtest_main )
-gtest_discover_tests(WrapTests)
+target_link_libraries(ConvertTests PRIVATE GTest::gtest GTest::gtest_main )
+
+gtest_discover_tests(ConvertTests)
