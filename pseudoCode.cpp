@@ -7,24 +7,21 @@
 
 
 //Jian Chang feedback
-'''
-well, the key is to have a isometric preserved mapping from source to target. unfortunately, 
-such mapping is not always possible, therefore we need to find some good approximation. 
-barycentric coordinate can do it if you can break both source and target into similar tiles 
-(could be a low detailed mesh or some volumes) and map all points in one tile of the source to the corresponding one of the target.
- it may not work out well if you treat the whole mesh together.  
- Also, it will be hard to have both tile partitions in the same number and with good correspondence- 
- so the tiling may need to be done manually or design some clever way to do it. 
- 
-AGenetic Isometric Shape Correspondence Algorithm with Adaptive Sampling YUSUF SAHILLIOĞLU, MiddleEast Technical University
- 
-This paper may provide some details to explain how to find the shape correspondence.  
- 
-Here is another paper to show how to simplify a quad mesh: 
-Integer-Grid Maps for Reliable Quad Meshing David Bommes1 Marcel Campen2 Hans-Christian Ebke2 Pierre Alliez1 Leif Kobbelt
-'''
 
-
+// well, the key is to have a isometric preserved mapping from source to target. unfortunately, 
+// such mapping is not always possible, therefore we need to find some good approximation. 
+// barycentric coordinate can do it if you can break both source and target into similar tiles 
+// (could be a low detailed mesh or some volumes) and map all points in one tile of the source to the corresponding one of the target.
+//  it may not work out well if you treat the whole mesh together.  
+//  Also, it will be hard to have both tile partitions in the same number and with good correspondence- 
+//  so the tiling may need to be done manually or design some clever way to do it. 
+ 
+// AGenetic Isometric Shape Correspondence Algorithm with Adaptive Sampling YUSUF SAHILLIOĞLU, MiddleEast Technical University
+ 
+// This paper may provide some details to explain how to find the shape correspondence.  
+ 
+// Here is another paper to show how to simplify a quad mesh: 
+// Integer-Grid Maps for Reliable Quad Meshing David Bommes1 Marcel Campen2 Hans-Christian Ebke2 Pierre Alliez1 Leif Kobbelt
 
 
 FUNCTION loadMeshes(inputMesh_x, inputMesh_y)

@@ -12,6 +12,7 @@ find_package(fmt CONFIG REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 # add include paths
 include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include/)
 # Now we add our target executable and the file it is built from.
 add_executable(Wrap)
 target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_SOURCE_DIR}/src/Wrap.cpp include/Wrap.h 
@@ -29,12 +30,21 @@ include(GoogleTest)
 enable_testing()
 add_executable(ConvertTests)
 
-target_sources(ConvertTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/WrapTests.cpp
-                                 ${CMAKE_SOURCE_DIR}/tests/ConvertTests.cpp
-                                ${CMAKE_SOURCE_DIR}/src/Wrap.cpp
-                                ${CMAKE_SOURCE_DIR}/include/Wrap.h
-                                ${CMAKE_SOURCE_DIR}/include/Convert.h
-                                ${CMAKE_SOURCE_DIR}/src/Convert.cpp
+target_sources(ConvertTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/CurveTests.cpp
+                                 ${CMAKE_SOURCE_DIR}/tests/meshTests.cpp
+                                 ${CMAKE_SOURCE_DIR}/tests/outputTests.cpp
+                                 ${CMAKE_SOURCE_DIR}/tests/processorTests.cpp
+
+                                ${CMAKE_SOURCE_DIR}/src/curve.cpp
+                                ${CMAKE_SOURCE_DIR}/src/mesh.cpp
+                                ${CMAKE_SOURCE_DIR}/src/output.cpp
+                                ${CMAKE_SOURCE_DIR}/src/processor.cpp
+
+                                ${CMAKE_SOURCE_DIR}/include/curve.h
+                                ${CMAKE_SOURCE_DIR}/include/mesh.h
+                                ${CMAKE_SOURCE_DIR}/include/output.h
+                                ${CMAKE_SOURCE_DIR}/include/processor.h
+
 )
 target_link_libraries(ConvertTests PRIVATE GTest::gtest GTest::gtest_main )
 

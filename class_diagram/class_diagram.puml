@@ -1,0 +1,63 @@
+@startuml
+
+class "Class Main" {
+    + input mesh x
+    + input mesh y
+    + input curves x
+    + input curves y
+    - write data to file()
+    - convert data to obj()
+}
+
+class "Class Mesh" {
+    - vector <vertex>
+    - vector <faces>
+    - vector <edge>
+    - mesh
+    - Open_file()
+    - read_file()
+    - Convert_mesh()
+    + validateMesh()
+}
+
+class "Class Curve" {
+    - curve
+    - readCurveInput()
+    - DiscretizeCurve()
+    + projectPoints()
+}
+
+class "Class Processor (singleton)" {
+    - Compute_barycentric_coordinates()
+    - Laplacians()
+    - wrap_patch_layout()
+}
+
+struct "Struct Vertex" {
+    - Vec3
+}
+
+struct "Struct Edge" {
+    - Vec2
+}
+
+struct "Struct Faces" {
+    - Vec4
+}
+
+struct "Struct Output" {
+    - write data to file()
+    - convert data to obj()
+}
+
+' Relationships
+"Class Main" --> "Class Mesh" : Uses
+"Class Main" --> "Class Curve" : Uses
+"Class Curve" *-- "Class Mesh" : Composition
+"Class Processor (singleton)" *-- "Class Mesh" : Composition
+"Class Processor (singleton)" *-- "Struct Output" : Composition
+"Class Mesh" --> "Struct Vertex"
+"Class Mesh" --> "Struct Edge"
+"Class Mesh" --> "Struct Faces"
+
+@enduml
