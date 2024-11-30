@@ -1,12 +1,10 @@
 @startuml
 
 class "Class Main" {
-    + input mesh x
-    + input mesh y
-    + input curves x
-    + input curves y
-    - write data to file()
-    - convert data to obj()
+    + load mesh source
+    + load mesh target
+    + load curves source
+    + load curves target
 }
 
 class "Class Mesh" {
@@ -16,8 +14,8 @@ class "Class Mesh" {
     - mesh
     - Open_file()
     - read_file()
-    - Convert_mesh()
-    + validateMesh()
+    - convert_mesh()[FBX to OBJ e.g.]
+    + validate_mesh()
 }
 
 class "Class Curve" {
