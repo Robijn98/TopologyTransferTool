@@ -23,7 +23,7 @@
 // Here is another paper to show how to simplify a quad mesh: 
 // Integer-Grid Maps for Reliable Quad Meshing David Bommes1 Marcel Campen2 Hans-Christian Ebke2 Pierre Alliez1 Leif Kobbelt
 
-
+//https://doc.cgal.org/latest/BGL/group__PkgBGLIoFuncsOBJ.html
 FUNCTION loadMeshes(inputMesh_x, inputMesh_y)
     loadMesh(inputMesh_x) //load mesh from file
     loadMesh(inputMesh_y) //load mesh from file

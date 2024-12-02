@@ -6,7 +6,7 @@ class Mesh
 {
 public:
     bool loadMesh(std::string filename);
-    void convert_mesh(std::string inputMesh);
+    //void convert_mesh(std::string inputMesh);
 private:
     std::string filename;
 };

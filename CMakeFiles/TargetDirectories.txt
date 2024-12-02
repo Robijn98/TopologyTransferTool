@@ -1,0 +1,5 @@
+/home/s5725067/myRepos/programming-project-Robijn98/CMakeFiles/Wrap.dir
+/home/s5725067/myRepos/programming-project-Robijn98/CMakeFiles/ConvertTests.dir
+/home/s5725067/myRepos/programming-project-Robijn98/CMakeFiles/test.dir
+/home/s5725067/myRepos/programming-project-Robijn98/CMakeFiles/edit_cache.dir
+/home/s5725067/myRepos/programming-project-Robijn98/CMakeFiles/rebuild_cache.dir

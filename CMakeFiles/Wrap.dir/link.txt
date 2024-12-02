@@ -1,0 +1,1 @@
+/opt/rh/gcc-toolset-13/root/usr/bin/c++ -O3 -DNDEBUG -rdynamic CMakeFiles/Wrap.dir/src/main.cpp.o CMakeFiles/Wrap.dir/src/mesh.cpp.o CMakeFiles/Wrap.dir/src/curve.cpp.o -o Wrap  /public/devel/24-25/vcpkg/installed/x64-linux/lib/libgmpxx.a /public/devel/24-25/vcpkg/installed/x64-linux/lib/libmpfr.a /public/devel/24-25/vcpkg/installed/x64-linux/lib/libgmp.a -pthread 

@@ -1,25 +1,35 @@
-# We will always try to use a version > 3.1 if avaliable
+# We will always try to use a version > 3.1 if available
 cmake_minimum_required(VERSION 3.2)
+
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{CMAKE_TOOLCHAIN_FILE})
    set(CMAKE_TOOLCHAIN_FILE $ENV{CMAKE_TOOLCHAIN_FILE})
 endif()
-# name of the project It is best to use something different from the exe name
-project(Wrap_build)
-find_package(fmt CONFIG REQUIRED)
 
-# Here we set the C++ standard to use
+# Name of the project
+project(Wrap_build)
+
+# Find required packages
+find_package(fmt CONFIG REQUIRED)
+find_package(CGAL REQUIRED) 
+
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-# add include paths
+
+# Add include paths
 include_directories(include)
 include_directories(${CMAKE_SOURCE_DIR}/include/)
-# Now we add our target executable and the file it is built from.
+
+# Main executable target
 add_executable(Wrap)
-target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_SOURCE_DIR}/src/Wrap.cpp include/Wrap.h 
-               ${CMAKE_SOURCE_DIR}/src/Convert.cpp ${CMAKE_SOURCE_DIR}/include/Convert.h)
+target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp 
+                            ${CMAKE_SOURCE_DIR}/src/mesh.cpp 
+                            include/mesh.h 
+                            ${CMAKE_SOURCE_DIR}/src/curve.cpp 
+                            ${CMAKE_SOURCE_DIR}/include/curve.h)
 
-
-target_link_libraries(Wrap PRIVATE  fmt::fmt-header-only)
+# Link libraries to the main executable
+target_link_libraries(Wrap PRIVATE fmt::fmt-header-only CGAL::CGAL) 
 
 #################################################################################
 # Testing code
@@ -28,24 +38,29 @@ target_link_libraries(Wrap PRIVATE  fmt::fmt-header-only)
 find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 enable_testing()
-add_executable(ConvertTests)
 
-target_sources(ConvertTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/CurveTests.cpp
-                                 ${CMAKE_SOURCE_DIR}/tests/meshTests.cpp
-                                 ${CMAKE_SOURCE_DIR}/tests/outputTests.cpp
-                                 ${CMAKE_SOURCE_DIR}/tests/processorTests.cpp
+# Test target
+add_executable(meshTests)
 
-                                ${CMAKE_SOURCE_DIR}/src/curve.cpp
-                                ${CMAKE_SOURCE_DIR}/src/mesh.cpp
-                                ${CMAKE_SOURCE_DIR}/src/output.cpp
-                                ${CMAKE_SOURCE_DIR}/src/processor.cpp
+target_sources(meshTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
+                                    ${CMAKE_SOURCE_DIR}/tests/meshTests.cpp
+                                    ${CMAKE_SOURCE_DIR}/tests/outputTests.cpp
+                                    ${CMAKE_SOURCE_DIR}/tests/processorTests.cpp
 
-                                ${CMAKE_SOURCE_DIR}/include/curve.h
-                                ${CMAKE_SOURCE_DIR}/include/mesh.h
-                                ${CMAKE_SOURCE_DIR}/include/output.h
-                                ${CMAKE_SOURCE_DIR}/include/processor.h
+                                    ${CMAKE_SOURCE_DIR}/src/curve.cpp
+                                    ${CMAKE_SOURCE_DIR}/src/mesh.cpp
+                                    ${CMAKE_SOURCE_DIR}/src/output.cpp
+                                    ${CMAKE_SOURCE_DIR}/src/processor.cpp
 
-)
-target_link_libraries(ConvertTests PRIVATE GTest::gtest GTest::gtest_main )
+                                    ${CMAKE_SOURCE_DIR}/include/curve.h
+                                    ${CMAKE_SOURCE_DIR}/include/mesh.h
+                                    ${CMAKE_SOURCE_DIR}/include/output.h
+                                    ${CMAKE_SOURCE_DIR}/include/processor.h)
 
-gtest_discover_tests(ConvertTests)
+# Link libraries to the test target
+target_link_libraries(meshTests PRIVATE GTest::gtest 
+                                         GTest::gtest_main 
+                                         CGAL::CGAL) 
+
+# Discover tests
+gtest_discover_tests(meshTests)
