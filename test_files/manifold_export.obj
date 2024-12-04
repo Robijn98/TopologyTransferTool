@@ -1,19 +1,41 @@
-# by chatgpt with the prompt: could you write me an obj that for sure had a manifold vertex
+# This file uses centimeters as units for non-parametric coordinates.
 
-# Non-manifold vertex example
-o NonManifoldVertexExample
+mtllib manifold_export.mtl
+g default
 
-# Vertices
-v 0.0 0.0 0.0   # Vertex 1 (shared non-manifold vertex)
-v 1.0 0.0 0.0   # Vertex 2
-v 0.0 1.0 0.0   # Vertex 3
-v -1.0 0.0 0.0  # Vertex 4
-v 0.0 -1.0 0.0  # Vertex 5
 
-# Faces
-f 1 2 3          # Triangle 1
-f 1 3 4          # Triangle 2
-f 1 4 5          # Triangle 3
-f 1 5 2          # Triangle 4
+#VERTEX
+v 0.500000 -0.000000 1.500000
+v 1.500000 -0.000000 1.500000
+v 0.500000 -0.000000 0.500000
+v 1.500000 -0.000000 0.500000
+v -0.500000 -0.000000 0.500000
+v -0.500000 0.000000 -0.500000
+v 0.500000 0.000000 -0.500000
 
-# Note: Vertex 1 is shared by four triangles, forming a non-manifold configuration.
+#TEXTURE INFO
+vt 0.000000 0.000000
+vt 1.000000 0.000000
+vt 0.000000 1.000000
+vt 1.000000 1.000000
+vt 0.000000 0.000000
+vt 1.000000 0.000000
+vt 1.000000 1.000000
+vt 0.000000 1.000000
+#NORMAL INFO
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+vn 0.000000 1.000000 0.000000
+s off
+g pPlane3
+usemtl initialShadingGroup
+
+
+#FACES
+f 1/1/1 2/2/2 4/4/3 3/3/4
+f 5/5/5 3/6/6 7/7/7 6/8/8
