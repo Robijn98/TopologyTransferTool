@@ -6,9 +6,9 @@
 int main()
 {
     Mesh mesh;
-    Polygon_mesh validPolygon;
+    Polygon_mesh polygon;
     std::string filename = "../test_files/deformed_sphere_export.obj";
-    mesh.loadMesh(filename, validPolygon);
+    mesh.loadMesh(filename, polygon);
 
     
 }
