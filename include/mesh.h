@@ -4,6 +4,8 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+
 
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
