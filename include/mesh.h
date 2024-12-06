@@ -27,7 +27,6 @@ class Mesh
 public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
-    void merge_vertices(vertex_descriptor v_keep, vertex_descriptor v_rm, Polygon_mesh& polygon);
 
     
 private:
