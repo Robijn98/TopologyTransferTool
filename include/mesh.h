@@ -9,20 +9,27 @@
 
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                Point;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polygon_mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               halfedge_descriptor;
+
+
 
 class Mesh
 {
 public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
+    void merge_vertices(vertex_descriptor v_keep, vertex_descriptor v_rm, Polygon_mesh& polygon);
+
+    
 private:
     std::string filename;
 };
