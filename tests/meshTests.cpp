@@ -28,7 +28,7 @@ TEST(Mesh, non_manifold_Mesh)
     mesh.loadMesh("../test_files/deformed_sphere_export.obj", validPolygon);
     mesh.loadMesh("../test_files/broken_mesh.obj", invalidPolygon);
     
-    //EXPECT_TRUE(mesh.validateMesh(validPolygon));
+    EXPECT_TRUE(mesh.validateMesh(validPolygon));
     EXPECT_FALSE(mesh.validateMesh(invalidPolygon));
 }
 
@@ -43,4 +43,14 @@ TEST(Mesh, non_quad_Mesh)
     EXPECT_TRUE(mesh.validateMesh(validPolygon));
     EXPECT_FALSE(mesh.validateMesh(invalidPolygon));
 
+}
+
+TEST(Mesh, writeMesh)
+{
+    Mesh mesh;
+    Polygon_mesh polygon;
+    mesh.loadMesh("../test_files/deformed_sphere_export.obj", polygon);
+    mesh.writeMesh("../test_files/output.obj", polygon);
+    EXPECT_TRUE("../test_files/output.obj");
+    EXPECT_FALSE("../test_files/outputOther.obj");
 }

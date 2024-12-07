@@ -10,5 +10,5 @@ int main()
     std::string filename = "../test_files/deformed_sphere_export.obj";
     mesh.loadMesh(filename, polygon);
     mesh.validateMesh(polygon);
-    
+    mesh.writeMesh("../test_files/output.obj", polygon);
 }

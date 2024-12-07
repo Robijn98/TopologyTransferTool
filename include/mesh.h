@@ -21,12 +21,12 @@ typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               halfedge_descriptor;
 
 
-
 class Mesh
 {
 public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
+    void writeMesh(std::string filename, Polygon_mesh &polygon);
 
     
 private:

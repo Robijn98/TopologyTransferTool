@@ -59,4 +59,14 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
     return 1;
 }
 
+void Mesh::writeMesh(std::string filename, Polygon_mesh &polygon)
+{
+  if (filename.empty())
+  {
+    std::cout << "new file" << std::endl;
+    std::ofstream{filename};
+  }
+  CGAL::IO::write_OBJ(filename, polygon);
+
+}
 
