@@ -70,3 +70,15 @@ void Mesh::writeMesh(std::string filename, Polygon_mesh &polygon)
 
 }
 
+void Mesh::triangulateMesh(Polygon_mesh &polygon)
+{
+  if(!CGAL::is_triangle_mesh(polygon))
+      {
+      std::cout << "Input mesh is not triangulated." << std::endl;
+      PMP::triangulate_faces(polygon);
+      std::cout << "Mesh triangulated." << std::endl;
+      }
+  else
+    std::cout << "Input mesh is already triangulated." << std::endl;  
+ }
+ 

@@ -1,8 +1,8 @@
 #include <iostream>
-#include "mesh.h"
 #include <QApplication>
 #include <iostream>
 #include "NGLScene.h"
+#include "mesh.h"
 
 
 
@@ -10,14 +10,22 @@ int main(int argc, char **argv)
 {
     Mesh mesh;
     Polygon_mesh polygon;
-    std::string filename = "../test_files/cube.obj";
+    std::string filename = "../test_files/deformed_sphere_export.obj";
     mesh.loadMesh(filename, polygon);
     mesh.validateMesh(polygon);
 
+    mesh.triangulateMesh(polygon);
 
     mesh.writeMesh("../test_files/output.obj", polygon);
 
-
+    //viewer
+    if(!CGAL::is_triangle_mesh(polygon))
+    {
+    std::cout << "Input mesh is not triangulated." << std::endl;
+    throw std::runtime_error("Input mesh is not triangulated.");
+    }
+    
+    
     QApplication app(argc, argv);
     QSurfaceFormat format;
     // set the number of samples for multisampling
@@ -38,20 +46,17 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("../test_files/Helix.obj");
-    std::string tname("../textures/helix_base.tif");
+    std::string oname("../test_files/output.obj");
 
     if(argc ==2)
     {
         oname=argv[1];
-        tname="../textures/ratGrid.png";
     }
     else if(argc == 3)
     {
         oname=argv[1];
-        tname=argv[2];
     }
-    NGLScene window(oname,tname);
+    NGLScene window(oname);
     // and set the OpenGL format
     window.setFormat(format);
     // we can now query the version to see if it worked
@@ -62,5 +67,6 @@ int main(int argc, char **argv)
     window.show();
 
     return app.exec();
+ 
 
 }

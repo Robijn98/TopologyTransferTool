@@ -10,13 +10,13 @@
 #include <ngl/ShaderLib.h>
 #include <iostream>
 
-NGLScene::NGLScene(const std::string &_oname, const std::string &_tname)
+NGLScene::NGLScene(const std::string &_oname)
 {
   setTitle("viewer");
   m_showBBox = true;
   m_showBSphere = true;
   m_objFileName = _oname;
-  m_textureFileName = _tname;
+  //m_textureFileName = _tname;
 }
 
 NGLScene::~NGLScene()
@@ -74,7 +74,7 @@ void NGLScene::initializeGL()
   ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
 
   // first we create a mesh from an obj passing in the obj file and texture
-  m_mesh.reset(new ngl::Obj(m_objFileName, m_textureFileName));
+  m_mesh.reset(new ngl::Obj(m_objFileName));
   // now we need to create this as a VAO so we can draw it
   m_mesh->createVAO();
   m_mesh->calcBoundingSphere();
@@ -130,6 +130,7 @@ void NGLScene::paintGL()
     ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
     m_transform.reset();
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    
     m_transform.setPosition(m_mesh->getSphereCenter());
     m_transform.setScale(m_mesh->getSphereRadius(), m_mesh->getSphereRadius(), m_mesh->getSphereRadius());
     loadMatricesToShader();
@@ -172,7 +173,7 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
     m_showBBox ^= true;
     break;
   case Qt::Key_P:
-    m_showBSphere ^= true;
+    m_showBSphere ^= false;
     break;
   case Qt::Key_Space:
     m_win.spinXFace = 0;
@@ -194,21 +195,6 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
       // now we need to create this as a VAO so we can draw it
       m_mesh->createVAO();
       m_mesh->calcBoundingSphere();
-    }
-  }
-  break;
-
-  case Qt::Key_T:
-  {
-    QString filename = QFileDialog::getOpenFileName(
-        nullptr,
-        tr("load texture"),
-        QDir::currentPath(),
-        tr("Image Files (*.png *.jpg *.bmp *.tif)"));
-
-    if (!filename.isNull())
-    {
-      m_mesh->setTexture(filename.toStdString());
     }
   }
   break;

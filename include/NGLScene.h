@@ -29,7 +29,7 @@ class NGLScene : public QOpenGLWindow
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene(const std::string &_oname, const std::string &_tname);
+    NGLScene(const std::string &_oname);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ private:
     void wheelEvent( QWheelEvent *_event) override;
 
     std::string m_objFileName;
-    std::string m_textureFileName;
+    //std::string m_textureFileName;
 
 
 };

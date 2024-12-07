@@ -11,7 +11,8 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                Point;
@@ -27,8 +28,7 @@ public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
     void writeMesh(std::string filename, Polygon_mesh &polygon);
-
-    
+    void triangulateMesh(Polygon_mesh &polygon);
 private:
     std::string filename;
 };
