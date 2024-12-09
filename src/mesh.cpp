@@ -2,23 +2,23 @@
 #include <cstdio>
 #include <filesystem>
 #include <CGAL/boost/graph/helpers.h>
-#include <string>
 #include <CGAL/boost/graph/iterator.h>
 #include <iterator>
 
 bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
 {
-    //load mesh from file using CGAL, this CGAL function can take care of different file formats
+    if(std::filesystem::is_empty(filename))
+  {
+    std::cerr << "Empty file." << std::endl;
+    return 0;
+  }
+  //load mesh from file using CGAL
   if(!PMP::IO::read_polygon_mesh(filename, polygon))
   {
     std::cerr << "Invalid input." << std::endl;
     return 0;
   }
-  if(std::filesystem::is_empty(filename))
-  {
-    std::cerr << "Empty file." << std::endl;
-    return 0;
-  }
+
   
   return 1;
 

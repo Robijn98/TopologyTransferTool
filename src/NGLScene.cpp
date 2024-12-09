@@ -73,13 +73,13 @@ void NGLScene::initializeGL()
   ngl::ShaderLib::use(ngl::nglColourShader);
   ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
 
-  // first we create a mesh from an obj passing in the obj file and texture
+  // create a mesh from an obj passing in the obj file
   m_mesh.reset(new ngl::Obj(m_objFileName));
-  // now we need to create this as a VAO so we can draw it
+  //creating as VAO to draw
   m_mesh->createVAO();
   m_mesh->calcBoundingSphere();
   ngl::VAOPrimitives::createSphere("sphere", 1.0, 20);
-  // as re-size is not explicitly called we need to do this.
+
   glViewport(0, 0, width(), height());
   m_text.reset(new ngl::Text("../fonts/Arial.ttf", 16));
   m_text->setScreenSize(width(), height());

@@ -72,9 +72,9 @@ include(GoogleTest)
 enable_testing()
 
 # Test target
-add_executable(meshTests)
+add_executable(curveTests)
 
-target_sources(meshTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
+target_sources(curveTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
                                     ${CMAKE_SOURCE_DIR}/tests/meshTests.cpp
                                     ${CMAKE_SOURCE_DIR}/tests/outputTests.cpp
                                     ${CMAKE_SOURCE_DIR}/tests/processorTests.cpp
@@ -90,9 +90,9 @@ target_sources(meshTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
                                     ${CMAKE_SOURCE_DIR}/include/processor.h)
 
 # Link libraries to the test target
-target_link_libraries(meshTests PRIVATE GTest::gtest 
+target_link_libraries(curveTests PRIVATE GTest::gtest 
                                          GTest::gtest_main 
                                          CGAL::CGAL) 
 
 # Discover tests
-gtest_discover_tests(meshTests)
+gtest_discover_tests(curveTests)
