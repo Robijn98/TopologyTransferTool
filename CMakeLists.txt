@@ -1,5 +1,5 @@
 # We will always try to use a version > 3.1 if available
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.12)
 
 
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE AND DEFINED ENV{CMAKE_TOOLCHAIN_FILE})
@@ -8,28 +8,60 @@ endif()
 
 # Name of the project
 project(Wrap_build)
+set(TargetName Wrap)
+
+find_package(NGL CONFIG REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
+#
+# Find the QtWidgets library
+find_package(Qt6 COMPONENTS OpenGL Widgets QUIET )
+if ( Qt6_FOUND )
+    message("Found Qt6 Using that")
+else()
+    message("Found Qt5 Using that")
+    find_package(Qt5 COMPONENTS OpenGL Widgets REQUIRED)
+endif()
+
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 # Find required packages
 find_package(fmt CONFIG REQUIRED)
 find_package(CGAL REQUIRED) 
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+add_executable(Wrap)
 
 # Add include paths
 include_directories(include)
 include_directories(${CMAKE_SOURCE_DIR}/include/)
+include_directories(include $ENV{HOME}/NGL/include)
 
 # Main executable target
-add_executable(Wrap)
 target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp 
                             ${CMAKE_SOURCE_DIR}/src/mesh.cpp 
-                            include/mesh.h 
+                            ${CMAKE_SOURCE_DIR}/include/mesh.h 
                             ${CMAKE_SOURCE_DIR}/src/curve.cpp 
-                            ${CMAKE_SOURCE_DIR}/include/curve.h)
+                            ${CMAKE_SOURCE_DIR}/include/curve.h
+                            ${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
+                            ${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
+                            ${PROJECT_SOURCE_DIR}/include/NGLScene.h
+                            ${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
+                            ${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
+                            ${PROJECT_SOURCE_DIR}/include/NGLScene.h)
 
 # Link libraries to the main executable
 target_link_libraries(Wrap PRIVATE fmt::fmt-header-only CGAL::CGAL) 
+target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
+
+add_custom_target(${TargetName}CopyShaders ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+    $<TARGET_FILE_DIR:${TargetName}>/shaders
+)
 
 #################################################################################
 # Testing code

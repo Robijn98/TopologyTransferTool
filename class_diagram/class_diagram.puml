@@ -1,6 +1,6 @@
-@startuml
+@startuml Wrapper
 
-class "Class Main" {
+class "Main" {
     + load mesh source
     + load mesh target
     + load curves source
@@ -25,7 +25,7 @@ class "Class Curve" {
     + projectPoints()
 }
 
-class "Class Processor (singleton)" {
+class "Class Environment (singleton)" {
     - Compute_barycentric_coordinates()
     - Laplacians()
     - wrap_patch_layout()
@@ -49,11 +49,11 @@ struct "Struct Output" {
 }
 
 ' Relationships
-"Class Main" --> "Class Mesh" : Uses
-"Class Main" --> "Class Curve" : Uses
+"Main" --> "Class Mesh" 
+"Main" --> "Class Curve"
 "Class Curve" *-- "Class Mesh" : Composition
-"Class Processor (singleton)" *-- "Class Mesh" : Composition
-"Class Processor (singleton)" *-- "Struct Output" : Composition
+"Class Environment (singleton)" *-- "Class Mesh" : Composition
+"Class Environment (singleton)" *-- "Struct Output" : Composition
 "Class Mesh" --> "Struct Vertex"
 "Class Mesh" --> "Struct Edge"
 "Class Mesh" --> "Struct Faces"
