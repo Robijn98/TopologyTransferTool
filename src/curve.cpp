@@ -69,7 +69,54 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
  }
 return 1;
 
- }
+}
 
 
+void Curve::discretizeCurve(std::vector<Point> &curve, std::vector<Point> &curveOut, int numPoints)
+{
+    //curvature based discretization
+    //use treshold to subdivide segments where curvature is high (specific value)
+    //traverse the polyline 
+    
+    double totalLength = 0.0;
+    //euclidean distance 
+    
+    for (int i = 0; i < curve.size() - 1; i++)
+    {
+        totalLength += CGAL::sqrt(CGAL::squared_distance(curve[i], curve[i + 1]));
+    }
+    //curvature based discretization
+    for(int i=0; i<curve.size() -2; i++)
+    {
+        CGAL::Vector_3<Kernel> v1 = curve[i+1] - curve[i];
+        CGAL::Vector_3<Kernel> v2 = curve[i+2] - curve[i+1];
+    
+        double angle = CGAL::approximate_angle(v1, v2);
+    
+        std::cout << angle << std::endl;
+
+    if(angle > 0.1)
+    {
+        for(int j = 0; j < numPoints; j++)
+        {
+            double t = static_cast<double>(j) / numPoints;
+            curveOut.push_back(curve[i] + t * v1);
+        }
+    }
+    else
+    {
+        curveOut.push_back(curve[i]);
+    }
+
+    while(curveOut.size() > numPoints)
+    {
+        curveOut.pop_back();
+    }
+    
+
+    }
+
+
+    
+}
 

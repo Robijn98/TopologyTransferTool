@@ -3,6 +3,8 @@
 #include <vector>
 #include <filesystem> 
 
+
+
 TEST(Curve, loadCurve) {
 
     Curve curve;
@@ -14,4 +16,16 @@ TEST(Curve, loadCurve) {
 
     EXPECT_FALSE(curve.loadCurve("../test_files/doesntexist.obj", invalidCurve));
     EXPECT_TRUE(invalidCurve.empty());
+}
+
+
+TEST(Curve, DiscretizeCurve) {
+
+    Curve curve;
+    std::vector<Point> curveIn;   
+    std::vector<Point> curveOut;   
+
+    curve.loadCurve("../test_files/deformed_sphere_line.obj", curveIn);
+    curve.discretizeCurve(curveIn, curveOut, 20);
+    EXPECT_EQ(curveOut.size(), 20);
 }
