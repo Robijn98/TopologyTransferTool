@@ -35,7 +35,7 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
         }
     }
 
-    //rewind file
+    //rewind file===
     file.clear();
     file.seekg(0, std::ios::beg);
 

@@ -57,6 +57,9 @@ target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp
 target_link_libraries(Wrap PRIVATE fmt::fmt-header-only CGAL::CGAL) 
 target_link_libraries(${TargetName} PRIVATE Qt::Widgets Qt::OpenGL NGL)
 
+
+
+
 add_custom_target(${TargetName}CopyShaders ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/shaders
@@ -96,3 +99,26 @@ target_link_libraries(curveTests PRIVATE GTest::gtest
 
 # Discover tests
 gtest_discover_tests(curveTests)
+
+
+
+if(EXISTS ${CMAKE_SOURCE_DIR}/test_files)
+    # Directory exists, proceed with copying files
+    message(STATUS "DIRECTORY 'test_files' EXISTS. Proceeding with setup.")
+
+    # Custom target to create the directory and copy test files
+    add_custom_target(
+        CopyTestfiles ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/files
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/test_files
+                ${CMAKE_BINARY_DIR}/files
+        COMMENT "Copying test files to ${CMAKE_BINARY_DIR}/files"
+    )
+else()
+    # Directory does not exist, skip setup
+    message(WARNING "DIRECTORY 'test_files' DOES NOT EXIST. Skipping setup.")
+endif()
+
+# Add the dependency for curveTests
+add_dependencies(curveTests CopyTestfiles)
