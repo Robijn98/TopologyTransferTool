@@ -13,7 +13,7 @@
 NGLScene::NGLScene(const std::string &_oname)
 {
   setTitle("viewer");
-  m_showBBox = true;
+  m_showBBox = false;
   m_showBSphere = true;
   m_objFileName = _oname;
   //m_textureFileName = _tname;

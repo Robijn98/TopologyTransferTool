@@ -10,13 +10,13 @@ int main(int argc, char **argv)
 {
     Mesh mesh;
     Polygon_mesh polygon;
-    std::string filename = "../test_files/normal_sphere_export.obj";
+    std::string filename = "files/normal_sphere_export.obj";
     mesh.loadMesh(filename, polygon);
     mesh.validateMesh(polygon);
 
     mesh.triangulateMesh(polygon);
 
-    mesh.writeMesh("../test_files/output.obj", polygon);
+    mesh.writeMesh("files/output.obj", polygon);
 
     //viewer
     if(!CGAL::is_triangle_mesh(polygon))
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("../test_files/output.obj");
+    std::string oname("files/output.obj");
 
     if(argc ==2)
     {
