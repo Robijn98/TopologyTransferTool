@@ -12,14 +12,39 @@ bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
     std::cerr << "Empty file." << std::endl;
     return 0;
   }
+
+  //create temporary file to store mesh without line
+  std::string tempFile = "temp.obj";
+  std::ifstream infile(filename);
+
+  std::ofstream temp(tempFile);
+
+  std::string line;
+
+  while(std::getline(infile, line))
+  {
+    std::istringstream iss(line);
+    std::string prefix;
+    iss >> prefix;
+    if(prefix != "l")
+    {
+      temp << line << "\n";
+    }
+  }
+  infile.close();
+  temp.close();
+
   //load mesh from file using CGAL
-  if(!PMP::IO::read_polygon_mesh(filename, polygon))
+  if(!PMP::IO::read_polygon_mesh(tempFile, polygon))
   {
     std::cerr << "Invalid input." << std::endl;
+    std::remove(tempFile.c_str());
     return 0;
   }
 
-  
+  //remove temporary file
+  std::remove(tempFile.c_str());
+
   return 1;
 
 }	

@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
     Mesh mesh;
     Polygon_mesh polygon;
-    std::string filename = "../test_files/deformed_sphere_export.obj";
+    std::string filename = "../test_files/normal_sphere_export.obj";
     mesh.loadMesh(filename, polygon);
     mesh.validateMesh(polygon);
 
