@@ -9,6 +9,7 @@ layout (location=0) out vec4 outColour;
 
 void main ()
 {
+    
     if (useTexture) {
         outColour = texture(tex, vertUV);
     } else {

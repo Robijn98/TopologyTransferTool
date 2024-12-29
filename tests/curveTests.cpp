@@ -29,3 +29,21 @@ TEST(Curve, DiscretizeCurve) {
     curve.discretizeCurve(curveIn, curveOut, 20);
     EXPECT_EQ(curveOut.size(), 20);
 }
+
+TEST(Curve, ProjectPoints) 
+{
+
+    Curve curve;
+    std::vector<Point> curveSource;   
+    std::vector<Point> curveTarget;
+    std::vector<Point> curveOutSource;
+    std::vector<Point> curveOutTarget;   
+    std::vector<Point> curveOut;   
+
+    curve.loadCurve("files/deformed_sphere_line.obj", curveTarget);
+    curve.loadCurve("files/normal_sphere_export.obj", curveSource);
+    curve.discretizeCurve(curveSource, curveOutSource, 5);
+    curve.discretizeCurve(curveTarget, curveOutTarget, 5);
+    curve.projectPoints(curveOutSource, curveOutTarget, curveOut);
+    EXPECT_EQ(curveOut.size(), curveOutSource.size());
+}

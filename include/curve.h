@@ -18,12 +18,11 @@ class Curve
 {
     public:
         bool loadCurve(std::string filename,  std::vector<Point> &curve);
-        void discretizeCurve(std::vector<Point> &curve, std::vector<Point> &curveOut, int numPoints);
-        int projectPoints();
+        std::vector<Point> discretizeCurve(std::vector<Point> &curve, std::vector<Point> &curveOut, int numPoints);
+        std::vector<Point> projectPoints(std::vector<Point> &curveSource, std::vector<Point> &curveTarget, std::vector<Point> &projectedCurve);
+    
     private:
         
-
-
 };
 
 
