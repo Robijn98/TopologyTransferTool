@@ -32,6 +32,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Find required packages
 find_package(fmt CONFIG REQUIRED)
 find_package(CGAL REQUIRED) 
+message(STATUS "Found CGAL version ${CGAL_VERSION}")
 
 add_executable(Wrap)
 
@@ -46,6 +47,8 @@ target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp
                             ${CMAKE_SOURCE_DIR}/include/mesh.h 
                             ${CMAKE_SOURCE_DIR}/src/curve.cpp 
                             ${CMAKE_SOURCE_DIR}/include/curve.h
+                            ${CMAKE_SOURCE_DIR}/include/meshUtility.h
+                            ${CMAKE_SOURCE_DIR}/src/meshUtility.cpp
                             ${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
                             ${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
                             ${PROJECT_SOURCE_DIR}/include/NGLScene.h
@@ -75,30 +78,30 @@ include(GoogleTest)
 enable_testing()
 
 # Test target
-add_executable(curveTests)
+add_executable(allTests)
 
-target_sources(curveTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
+target_sources(allTests PRIVATE ${CMAKE_SOURCE_DIR}/tests/curveTests.cpp
                                     ${CMAKE_SOURCE_DIR}/tests/meshTests.cpp
                                     ${CMAKE_SOURCE_DIR}/tests/outputTests.cpp
-                                    ${CMAKE_SOURCE_DIR}/tests/processorTests.cpp
+                                    ${CMAKE_SOURCE_DIR}/tests/meshUtilityTests.cpp
 
                                     ${CMAKE_SOURCE_DIR}/src/curve.cpp
                                     ${CMAKE_SOURCE_DIR}/src/mesh.cpp
                                     ${CMAKE_SOURCE_DIR}/src/output.cpp
-                                    ${CMAKE_SOURCE_DIR}/src/processor.cpp
+                                    ${CMAKE_SOURCE_DIR}/src/meshUtility.cpp
 
                                     ${CMAKE_SOURCE_DIR}/include/curve.h
                                     ${CMAKE_SOURCE_DIR}/include/mesh.h
                                     ${CMAKE_SOURCE_DIR}/include/output.h
-                                    ${CMAKE_SOURCE_DIR}/include/processor.h)
+                                    ${CMAKE_SOURCE_DIR}/include/meshUtility.h)
 
 # Link libraries to the test target
-target_link_libraries(curveTests PRIVATE GTest::gtest 
+target_link_libraries(allTests PRIVATE GTest::gtest 
                                          GTest::gtest_main 
                                          CGAL::CGAL) 
 
 # Discover tests
-gtest_discover_tests(curveTests)
+gtest_discover_tests(allTests)
 
 
 
@@ -121,4 +124,4 @@ else()
 endif()
 
 # Add the dependency for curveTests
-add_dependencies(curveTests CopyTestfiles)
+add_dependencies(allTests CopyTestfiles)
