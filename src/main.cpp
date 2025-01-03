@@ -3,23 +3,49 @@
 #include <iostream>
 #include "NGLScene.h"
 #include "mesh.h"
-
-
+#include "meshUtility.h"
+#include "curve.h"
 
 int main(int argc, char **argv)
 {
     Mesh mesh;
-    Polygon_mesh polygon;
-    std::string filename = "files/normal_sphere_export.obj";
-    mesh.loadMesh(filename, polygon);
-    mesh.validateMesh(polygon);
+    Polygon_mesh polygonSource;
+    Polygon_mesh polygonTarget;
+    std::string filenameSource = "files/normal_sphere_export.obj";
+    std::string filenameTarget = "files/deformed_sphere_line.obj";
 
-    mesh.triangulateMesh(polygon);
+    mesh.loadMesh(filenameSource, polygonSource);
+    mesh.validateMesh(polygonSource);
+    mesh.triangulateMesh(polygonSource);
 
-    mesh.writeMesh("files/output.obj", polygon);
+    mesh.loadMesh(filenameTarget, polygonTarget);
+    mesh.validateMesh(polygonTarget);
+    mesh.triangulateMesh(polygonTarget);
+
+    //curves
+    Curve curve;
+    std::vector<Point> curveRef;
+    std::vector<Point> discretizedCurve;
+    std::vector<Point> projectedCurve;
+
+    curve.loadCurve("files/deformed_sphere_line.obj", curveRef);
+    int numPoints = 10; 
+    discretizedCurve = curve.discretizeCurve(curveRef, discretizedCurve, numPoints);
+    std::cout << "Curve discretized successfully." << std::endl;
+    projectedCurve = curve.projectPoints(discretizedCurve, curveRef, projectedCurve);
+    std::cout << "Points projected successfully onto the target curve." << std::endl;
+
+    //mesh utility
+    meshUtility meshUtil;
+    std::vector<double> barycentric_coordinates;
+    meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
+    meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
+    
+    
+    //mesh.writeMesh("files/output.obj", polygonSource);
 
     //viewer
-    if(!CGAL::is_triangle_mesh(polygon))
+    if(!CGAL::is_triangle_mesh(polygonSource))
     {
     std::cout << "Input mesh is not triangulated." << std::endl;
     throw std::runtime_error("Input mesh is not triangulated.");

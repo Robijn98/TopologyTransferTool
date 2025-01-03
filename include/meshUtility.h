@@ -18,6 +18,7 @@ class meshUtility
 {
     public:
         void computeBarycentric_coordinates(Polygon_mesh &polygon, std::vector<Point> &curveRef, std::vector<double> &barycentric_coordinates);
+        void initialWrapping(Polygon_mesh &polygonSource,Polygon_mesh &polygonTarget, std::vector<Point> &curveRef, std::vector<double> &barycentric_coordinates);
         //void laplacianSmoothing(Polygon_mesh &polygon, int iterations);
         //void wrapMesh(Polygon_mesh &polygon, std::vector<Point> &curveRef, std::vector<double> &barycentric_coordinates);
     private:
