@@ -37,13 +37,14 @@ int main(int argc, char **argv)
 
     //mesh utility
     meshUtility meshUtil;
-    std::vector<double> barycentric_coordinates;
-    meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
-    meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
+    std::vector<std::array<double, 3>> barycentric_coordinates;
+    meshUtil.computeBarycentric_coordinates(polygonSource, discretizedCurve, barycentric_coordinates);
+   
+    //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     
     
     //mesh.writeMesh("files/output.obj", polygonSource);
-
+    /*
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
     {
@@ -72,7 +73,7 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("files/output.obj");
+    std::string oname("files/deformed_sphere_export.obj");
 
     if(argc ==2)
     {
@@ -93,6 +94,6 @@ int main(int argc, char **argv)
     window.show();
 
     return app.exec();
- 
-
+    */
+   return 0;
 }

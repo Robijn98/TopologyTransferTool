@@ -139,7 +139,7 @@ std::vector<Point> Curve:: projectPoints(std::vector<Point> &curveSource, std::v
 
 
         projectedCurve.push_back(newPoint);
-        std::cerr<< curveSource[i] << std::endl;
+        //std::cerr<< curveSource[i] << std::endl;
     }
     return projectedCurve;
 }
