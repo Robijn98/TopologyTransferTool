@@ -10,6 +10,9 @@
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Kd_tree.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+
 //#include <CGAL/Point_set_processing_3.h>
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
@@ -24,34 +27,133 @@ typedef CGAL::AABB_tree<AABB_Traits> AABB_Tree;
 typedef Kernel::Vector_3 Vector_3;
 
 
-void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::vector<Point> &curveRef ,std::vector<std::array<double, 3>> &barycentric_coordinates) 
+#include <iostream>
+#include <limits> // for std::numeric_limits
+
+#include <iostream>
+#include <limits> // for std::numeric_limits
+
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>  
+
+void meshUtility::computeBarycentric_coordinates(
+    Polygon_mesh &polygon,
+    std::vector<Point> &curveRef,
+    std::vector<std::array<double, 3>> &barycentric_coordinates)
 {
-    // Divide the mesh into triangulated regions
-    //close the guiding curve if not closed 
-    if(curveRef.front() != curveRef.back())
-    {
+    // Close the guiding curve if not closed
+    if (curveRef.front() != curveRef.back()) {
         curveRef.push_back(curveRef.front());
     }
-    //make an intersection perpundicular to the curve
-    //get the mid point of the curve
-    double curve_midPoint = floor(curveRef.size()/2);
-    //get the vector from the lastpoint to the mid point
-    Vector_3 vector = curveRef[curve_midPoint-1] - curveRef[curve_midPoint];
-    Vector_3 perpendicular = CGAL::cross_product(vector, Vector_3(0,0,1));
-    perpendicular = perpendicular / std::sqrt(perpendicular.squared_length());
+    //print all points curveref
+    for (auto point : curveRef)
+    {
+        std::cout << "Point: " << point << std::endl;
+    }
+    // Get the midpoint index of the curve
+    size_t curve_midPoint = floor(curveRef.size() / 2);
+    std::cout << "Midpoint index: " << curve_midPoint << std::endl;
+    // Get the vertex index corresponding to the midpoint
+    auto midpoint_vertex_index = curveRef[curve_midPoint];
 
-    //find the next vertex along the perpendicular vector
-    double step_size = 1.0;
-    Point_3 next_point = curveRef[curve_midPoint] + step_size * perpendicular;
+    // Print out the midpoint vertex index
+    std::cout << "Midpoint vertex index: " << midpoint_vertex_index << std::endl;
 
-    //get vertices of the mesh
-    AABB_Tree tree(faces(polygon).first, faces(polygon).second, polygon);
-    Point_3 closest_point = tree.closest_point(next_point);
-    std::cout << "Closest point: " << closest_point << std::endl;
+    // Get the coordinates of the midpoint vertex from the mesh
+    Point_3 midpoint_vertex_coords;
     
 
+}
 
-}   
+   
+    /*
+    while (iteration < max_iterations) {
+        // Step in the tangent direction and find the closest point
+        Point_3 next_point = Point_3(
+            current_point.x() + step_size * tangent.x(),
+            current_point.y() + step_size * tangent.y(),
+            current_point.z() + step_size * tangent.z());
+
+        // Find the closest point and primitive in the mesh
+        auto result = tree.closest_point_and_primitive(next_point);
+        Point_3 closest_point = result.first;
+
+        // Check if the closest point is a vertex in the mesh by comparing to existing vertices
+        bool is_vertex = false;
+
+        // Debug output: Show coordinates of closest point
+        std::cout << "Closest point: " << closest_point << std::endl;
+
+        for (auto v : polygon.vertices()) {
+            // Get the coordinates of the vertex (Point_3)
+            Point_3 vertex_point = get(CGAL::vertex_point, polygon, v);
+
+            // Check if the distance is less than a threshold (e.g., epsilon)
+            if (CGAL::squared_distance(closest_point, vertex_point) < epsilon) {
+                is_vertex = true;
+                std::cout << "Found a matching vertex: " << vertex_point << std::endl;
+                break;
+            }
+        }
+
+        // If the closest point is the starting vertex, exit the loop
+        if (is_vertex && closest_point == starting_vertex) {
+            std::cout << "Reached the starting vertex again: " << starting_vertex << std::endl;
+            break; // Exit the loop when we reach the starting vertex
+        }
+
+        // Compute the distance between the current point and the closest point
+        double distance_to_closest = std::sqrt(CGAL::squared_distance(closest_point, current_point));
+
+        // Debug output: Log the movement progress
+        std::cout << "Iteration " << iteration << ": " 
+                  << "Current Point: " << current_point 
+                  << ", Next Point: " << next_point
+                  << ", Distance to closest: " << distance_to_closest << std::endl;
+
+        // Relaxed stopping condition
+        if (distance_to_closest < epsilon) {
+            std::cout << "Converged! Reached the desired point." << std::endl;
+            break;
+        }
+
+        // Find the corresponding face for the closest point
+        Surface_mesh::Face_index face(result.second);
+
+        // Compute the face normal
+        Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(face, polygon);
+
+        // Update tangent direction
+        tangent = CGAL::cross_product(normal, perpendicular);
+        tangent = tangent / std::sqrt(tangent.squared_length());
+
+        // Update current point and add it to the perpendicular curve
+        perpendicular_curve.push_back(closest_point);
+        current_point = closest_point;
+
+        // Increment iteration count
+        ++iteration;
+
+        // Optional: Increase the step size to ensure progress (avoid too small steps)
+        if (distance_to_closest < 0.1) {
+            step_size *= 1.5; // Make bigger steps if the progress is slow
+        }
+
+        // Optional: Decrease the step size if the loop is moving too fast (overshooting)
+        if (distance_to_closest > 1.0) {
+            step_size *= 0.5; // Reduce step size to make finer adjustments
+        }
+    }
+
+    if (iteration == max_iterations) {
+        std::cerr << "Warning: Maximum iterations reached without convergence.\n";
+    }
+    */
 
 
 

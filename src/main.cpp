@@ -28,17 +28,19 @@ int main(int argc, char **argv)
     std::vector<Point> discretizedCurve;
     std::vector<Point> projectedCurve;
 
-    curve.loadCurve("files/deformed_sphere_line.obj", curveRef);
-    int numPoints = 10; 
-    discretizedCurve = curve.discretizeCurve(curveRef, discretizedCurve, numPoints);
-    std::cout << "Curve discretized successfully." << std::endl;
-    projectedCurve = curve.projectPoints(discretizedCurve, curveRef, projectedCurve);
-    std::cout << "Points projected successfully onto the target curve." << std::endl;
+    curve.loadCurve("files/normal_sphere_export.obj", polygonSource, curveRef);
+
+
+    // int numPoints = 10; 
+    // discretizedCurve = curve.discretizeCurve(curveRef, discretizedCurve, numPoints);
+    // std::cout << "Curve discretized successfully." << std::endl;
+    // projectedCurve = curve.projectPoints(discretizedCurve, curveRef, projectedCurve);
+    // std::cout << "Points projected successfully onto the target curve." << std::endl;
 
     //mesh utility
     meshUtility meshUtil;
     std::vector<std::array<double, 3>> barycentric_coordinates;
-    meshUtil.computeBarycentric_coordinates(polygonSource, discretizedCurve, barycentric_coordinates);
+    meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
    
     //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     
