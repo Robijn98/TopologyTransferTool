@@ -25,18 +25,15 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_Traits;
 typedef CGAL::AABB_tree<AABB_Traits> AABB_Tree;
 typedef Kernel::Vector_3 Vector_3;
+typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 
 
 #include <iostream>
 #include <limits> // for std::numeric_limits
-
 #include <iostream>
 #include <limits> // for std::numeric_limits
-
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
-
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>  
@@ -46,29 +43,49 @@ void meshUtility::computeBarycentric_coordinates(
     std::vector<Point> &curveRef,
     std::vector<std::array<double, 3>> &barycentric_coordinates)
 {
-    // Close the guiding curve if not closed
+    // Ensure the curve is closed
     if (curveRef.front() != curveRef.back()) {
         curveRef.push_back(curveRef.front());
     }
-    //print all points curveref
-    for (auto point : curveRef)
-    {
-        std::cout << "Point: " << point << std::endl;
+
+    // Print all curve reference points
+    for (const auto &point : curveRef) {
+        std::cout << "Curve Point: " << point << std::endl;
     }
-    // Get the midpoint index of the curve
-    size_t curve_midPoint = floor(curveRef.size() / 2);
-    std::cout << "Midpoint index: " << curve_midPoint << std::endl;
-    // Get the vertex index corresponding to the midpoint
-    auto midpoint_vertex_index = curveRef[curve_midPoint];
 
-    // Print out the midpoint vertex index
-    std::cout << "Midpoint vertex index: " << midpoint_vertex_index << std::endl;
+    // Get the midpoint of the curve
+    size_t curve_midPoint = curveRef.size() / 2;
+    Point midpoint_vertex = curveRef[curve_midPoint];
+    std::cout << "Midpoint: " << midpoint_vertex << std::endl;
 
-    // Get the coordinates of the midpoint vertex from the mesh
-    Point_3 midpoint_vertex_coords;
-    
+    // Compute tangent vector at the midpoint
+    Vector_3 tangent = curveRef[curve_midPoint + 1] - curveRef[curve_midPoint - 1];
+    tangent = tangent / std::sqrt(tangent.squared_length());
 
+    // Compute the perpendicular vector (assuming XY plane for now)
+    Vector_3 perpendicular = CGAL::cross_product(tangent, Vector_3(0, 0, 1));
+    perpendicular = perpendicular / std::sqrt(perpendicular.squared_length());
+
+    // Filter vertices along the perpendicular line
+    std::vector<Point> verticesCurve;
+    double tolerance = 1e-6; // Tolerance for floating-point comparison
+    for (vertex_descriptor v : vertices(polygon)) {
+        Point vertex_point = get(CGAL::vertex_point, polygon, v);
+        Vector_3 vec = vertex_point - midpoint_vertex;
+
+        // Project onto the perpendicular vector
+        double projection = vec * perpendicular;
+        if (std::fabs(projection) < tolerance) { // Check proximity to perpendicular line
+            verticesCurve.push_back(vertex_point);
+        }
+    }
+
+    // Print filtered vertices
+    for (const auto &vertex : verticesCurve) {
+        std::cout << "Filtered Vertex: " << vertex << std::endl;
+    }
 }
+
 
    
     /*
