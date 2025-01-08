@@ -9,14 +9,24 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 
+#include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                Point;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polygon_mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;
+typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               halfedge_descriptor;
 
 class meshUtility
 {
     public:
+        std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon);
         void computeBarycentric_coordinates(Polygon_mesh &polygon, std::vector<Point> &curveRef, std::vector<std::array<double, 3>> &barycentric_coordinates);
         //void initialWrapping(Polygon_mesh &polygonSource, Polygon_mesh &polygonTarget, std::vector<Point> &curveRef, std::vector<double> &barycentric_coordinates);
 

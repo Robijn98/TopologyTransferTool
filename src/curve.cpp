@@ -60,7 +60,7 @@ bool Curve::loadCurve(std::string filename, Polygon_mesh &polygon, std::vector<P
                 {
                 //look up the vertex in the file
                 //std::cout << curveVertices[idx - 1] << std::endl;
-                curve.push_back(curveVertices[idx - 1]);
+                curve.push_back(curveVertices[idx]);
                 }
             }    
             catch(const std::exception& e)

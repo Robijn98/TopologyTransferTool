@@ -22,6 +22,7 @@ typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               halfedge_descriptor;
 
 
+
 class Mesh
 {
 public:

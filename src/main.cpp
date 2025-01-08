@@ -40,7 +40,18 @@ int main(int argc, char **argv)
     //mesh utility
     meshUtility meshUtil;
     std::vector<std::array<double, 3>> barycentric_coordinates;
-    meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
+    std::map<std::string, std::array<Point, 3>> triangles;
+    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource);
+    
+    //print triangles
+    for (const auto& triangle : triangles) {
+        std::cout << "Triangle: " << triangle.first << std::endl;
+        for (const auto& point : triangle.second) {
+            std::cout << "Point: " << point << std::endl;
+        }
+    }
+    
+    //meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
    
     //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     

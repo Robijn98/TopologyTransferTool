@@ -27,67 +27,165 @@ typedef CGAL::AABB_tree<AABB_Traits> AABB_Tree;
 typedef Kernel::Vector_3 Vector_3;
 typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 
-
 #include <iostream>
-#include <limits> // for std::numeric_limits
+#include <limits> 
 #include <iostream>
-#include <limits> // for std::numeric_limits
+#include <limits> 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>  
 
-void meshUtility::computeBarycentric_coordinates(
-    Polygon_mesh &polygon,
-    std::vector<Point> &curveRef,
-    std::vector<std::array<double, 3>> &barycentric_coordinates)
+std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon)
 {
-    // Ensure the curve is closed
-    if (curveRef.front() != curveRef.back()) {
-        curveRef.push_back(curveRef.front());
-    }
-
-    // Print all curve reference points
-    for (const auto &point : curveRef) {
-        std::cout << "Curve Point: " << point << std::endl;
-    }
-
-    // Get the midpoint of the curve
-    size_t curve_midPoint = curveRef.size() / 2;
-    Point midpoint_vertex = curveRef[curve_midPoint];
-    std::cout << "Midpoint: " << midpoint_vertex << std::endl;
-
-    // Compute tangent vector at the midpoint
-    Vector_3 tangent = curveRef[curve_midPoint + 1] - curveRef[curve_midPoint - 1];
-    tangent = tangent / std::sqrt(tangent.squared_length());
-
-    // Compute the perpendicular vector (assuming XY plane for now)
-    Vector_3 perpendicular = CGAL::cross_product(tangent, Vector_3(0, 0, 1));
-    perpendicular = perpendicular / std::sqrt(perpendicular.squared_length());
-
-    // Filter vertices along the perpendicular line
-    std::vector<Point> verticesCurve;
-    double tolerance = 1e-6; // Tolerance for floating-point comparison
+    // Step 1: Cut the mesh along the XY plane
+    std::vector<Point> xy_midline_points;
+    double z_threshold = 1e-3; // Threshold for splitting along XY plane (based on Z value)
     for (vertex_descriptor v : vertices(polygon)) {
         Point vertex_point = get(CGAL::vertex_point, polygon, v);
-        Vector_3 vec = vertex_point - midpoint_vertex;
-
-        // Project onto the perpendicular vector
-        double projection = vec * perpendicular;
-        if (std::fabs(projection) < tolerance) { // Check proximity to perpendicular line
-            verticesCurve.push_back(vertex_point);
+        
+        // If the vertex is near the XY plane (i.e., its Z-coordinate is close to 0)
+        if (std::fabs(vertex_point.z()) < z_threshold) {
+            xy_midline_points.push_back(vertex_point);
         }
     }
+    
+    // std::cerr << "Number of points on XY midline: " << xy_midline_points.size() << std::endl;   
+    // //print coordinates
+    // for(const auto& point : xy_midline_points) {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
 
-    // Print filtered vertices
-    for (const auto &vertex : verticesCurve) {
-        std::cout << "Filtered Vertex: " << vertex << std::endl;
+    // Step 2: Cut the mesh along the XZ plane
+    std::vector<Point> xz_midline_points;
+    double y_threshold = 1e-3; // Threshold for splitting along XZ plane (based on Y value)
+    for (vertex_descriptor v : vertices(polygon)) {
+        Point vertex_point = get(CGAL::vertex_point, polygon, v);
+        
+        // If the vertex is near the XZ plane (i.e., its Y-coordinate is close to 0)
+        if (std::fabs(vertex_point.y()) < y_threshold) {
+            xz_midline_points.push_back(vertex_point);
+        }
     }
+    // std::cerr << "Number of points on XZ midline: " << xz_midline_points.size() << std::endl;
+    // //print coordinates
+    // for(const auto& point : xz_midline_points) {
+    //       std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    //  }
+
+    
+    //step 3: based on the four big intersections, we can make imaginary quads and divide those into triangles
+    std::vector<Point> intersection_points;
+    for(const auto& point: xy_midline_points)
+    {
+        //find the intersections with the xz midline
+        for(const auto& point2: xz_midline_points)
+        {
+            if(point2.x() == point.x() && point2.y() == point.y() && point2.z() == point.z())
+            {
+               intersection_points.push_back(point);
+
+            }
+        }
+    }
+    
+    // std::cerr << "Number of intersection points: " << intersection_points.size() << std::endl;
+    // for (const auto& point: intersection_points)
+    // {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
+
+    //split up the lines xymidline using the intersection points and put back the points into a new vector
+    Point intersection1 = intersection_points[0];
+    Point intersection2 = intersection_points[1];
+
+    // Step 3: Split XY midline
+    std::vector<Point> top_xy_points;
+    for (const auto &point : xy_midline_points) {
+        // Only keep points between the two intersections
+        if (point.y() >= intersection1.y())
+            {
+            top_xy_points.push_back(point);
+            }
+    }
+
+    std::vector<Point> bottom_xy_points;
+    for (const auto &point : xy_midline_points) {
+        // Only keep points between the two intersections
+        if (point.y() <= intersection1.y())
+            {
+            bottom_xy_points.push_back(point);
+            }
+    }
+
+    // Print results for maya visualization
+    // std::cout << "Split XY top_xy_points:" << std::endl;
+    // for (const auto &point : top_xy_points) {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
+    // std::cout << "Split XY bottom_xy_points:" << std::endl;
+    // for (const auto &point : bottom_xy_points) {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
+
+    // Step 4: split XZ midline using the intersection points and put back the points into a new vector
+    std::vector<Point> right_xz_points;
+    for (const auto &point : xz_midline_points) {
+        // Only keep points between the two intersections
+        if (point.z() >= intersection1.z())
+            {
+            right_xz_points.push_back(point);
+            }
+    }
+
+    // std::cout << "Split XZ right_xz_points:" << std::endl;
+    // for(const auto &point : right_xz_points) {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
+
+    std::vector<Point> left_xz_points;
+    for( const auto &point : xz_midline_points) {
+        // Only keep points between the two intersections
+        if (point.z() <= intersection1.z())
+            {
+            left_xz_points.push_back(point);
+            }
+    }
+
+    // std::cout << "Split XZ left_xz_points:" << std::endl;
+
+    // for(const auto &point : left_xz_points) {
+    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    // }
+
+    //Step 5: create the actual triangles from the points
+    
+    Point_3 midpoint_right_xz = right_xz_points[ceil(right_xz_points.size() / 2)];
+    Point_3 midpoint_bottom_xy = bottom_xy_points[ceil(bottom_xy_points.size() / 2)];
+    Point_3 midpoint_left_xz = left_xz_points[ceil(left_xz_points.size() / 2)];
+    Point_3 midpoint_top_xy = top_xy_points[ceil(top_xy_points.size() / 2)];
+
+    // std::cout << "Midpoint on right XZ curve: " << midpoint_right_xz << std::endl;
+    // std::cout << "Midpoint on bottom XY curve: " << midpoint_bottom_xy << std::endl;
+    // std::cout << "Midpoint on left XZ curve: " << midpoint_left_xz << std::endl;
+    // std::cout << "Midpoint on top XY curve: " << midpoint_top_xy << std::endl;
+
+
+    //create dictionary for triangles to be used for barycentric coordinates
+    std::map<std::string, std::array<Point, 3>> triangles; 
+    triangles["triangle1"] = {midpoint_right_xz, midpoint_bottom_xy, intersection1};
+    triangles["triangle2"] = {midpoint_right_xz, midpoint_bottom_xy, intersection2};
+    triangles["triangle3"] = {midpoint_left_xz, midpoint_top_xy, intersection1};
+    triangles["triangle4"] = {midpoint_left_xz, midpoint_top_xy, intersection2};
+    triangles["triangle5"] = {midpoint_right_xz, midpoint_top_xy, intersection1};
+    triangles["triangle6"] = {midpoint_right_xz, midpoint_top_xy, intersection2};
+    triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
+    triangles["triangle8"] = {midpoint_left_xz, midpoint_bottom_xy, intersection2};
+
+    return triangles;
 }
 
-
-   
     /*
     while (iteration < max_iterations) {
         // Step in the tangent direction and find the closest point
