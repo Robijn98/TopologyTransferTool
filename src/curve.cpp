@@ -69,10 +69,11 @@ bool Curve::loadCurve(std::string filename, Polygon_mesh &polygon, std::vector<P
             }
             
         //print all points in the curve
-        for (auto point : curve)
-        {
-            std::cout << "curveVertex: " << point << std::endl;
-        }
+        
+        // for (auto point : curve)
+        // {
+        //     std::cout << "curveVertex: " << point << std::endl;
+        // }
             
         
 
