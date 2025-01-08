@@ -29,8 +29,8 @@ TEST(MeshUtility, ComputeBarycentricCoordinates)
     triangles["Triangle1"] = {Point(0, 0, 0), Point(1, 0, 0), Point(0, 1, 0)};
 
     // Add additional points inside the triangle for testing
-    polygon.add_vertex(Point(0.25, 0.25, 0)); // Inside Triangle1
-    polygon.add_vertex(Point(0.75, 0.25, 0)); // Inside Triangle1
+    polygon.add_vertex(Point(0.25, 0.25, 0)); 
+    polygon.add_vertex(Point(0.75, 0.25, 0)); 
 
     // Vector to store the barycentric coordinates
     std::vector<std::array<double, 3>> barycentric_coordinates;

@@ -29,11 +29,11 @@ typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 
 
 
-std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon)
+std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon, double z_threshold, double y_threshold)
 {
     // Step 1: Cut the mesh along the XY plane
     std::vector<Point> xy_midline_points;
-    double z_threshold = 1e-3; // Threshold for splitting along XY plane (based on Z value)
+    //double z_threshold = 0.1; // Threshold for splitting along XY plane (based on Z value)
     for (vertex_descriptor v : vertices(polygon)) {
         Point vertex_point = get(CGAL::vertex_point, polygon, v);
         
@@ -51,7 +51,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
     // Step 2: Cut the mesh along the XZ plane
     std::vector<Point> xz_midline_points;
-    double y_threshold = 1e-3; // Threshold for splitting along XZ plane (based on Y value)
+    //double y_threshold = 1e-3; // Threshold for splitting along XZ plane (based on Y value)
     for (vertex_descriptor v : vertices(polygon)) {
         Point vertex_point = get(CGAL::vertex_point, polygon, v);
         
@@ -177,7 +177,7 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
             double vu = area_PCA / area_ABC;
             double w = area_PAB / area_ABC;
 
-            if(std::abs(u + vu + w - 1) < 1e-6)
+            if (u >= 0 && vu >= 0 && w >= 0 && std::abs(u + vu + w - 1) < 1)
             {
                 bary_coords[0] = u;
                 bary_coords[1] = vu;
@@ -185,13 +185,17 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
                 barycentric_coordinates.push_back(bary_coords);
             }
 
-                std::cout << "Vertex " << P 
-                          << " is inside triangle " << triangle.first 
-                          << " with barycentric coordinates: (" 
-                          << u << ", " << vu << ", " << w << ")" << std::endl;
+                // std::cout << "Vertex " << P 
+                //           << " is inside triangle " << triangle.first 
+                //           << " with barycentric coordinates: (" 
+                //           << u << ", " << vu << ", " << w << ")" << std::endl;
 
                 
             }
         }
+    // Print the barycentric coordinates with vertex 
+    for(const auto& coords : barycentric_coordinates) {
         std::cout << "Barycentric coordinates computed successfully." << std::endl;
     }
+
+
