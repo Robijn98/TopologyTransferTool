@@ -147,3 +147,51 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     return triangles;
 }
 
+void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles, std::vector<std::array<double, 3>> &barycentric_coordinates)
+{
+    Mesh mesh; 
+    mesh.triangulateMesh(polygon);
+    //Create an AABB tree for the mesh
+    AABB_Tree tree(faces(polygon).first, faces(polygon).second, polygon);
+    //get the vertices that are inside each triangle
+    for(const auto& triangle : triangles) {
+        std::array<Point, 3> triangle_points = triangle.second;
+        const Point &A = triangle_points[0];
+        const Point &B = triangle_points[1];
+        const Point &C = triangle_points[2];  
+
+        double area_ABC = CGAL::sqrt(CGAL::squared_area(A, B, C));
+
+        // Create a vector to store the barycentric coordinates
+        std::array<double, 3> bary_coords;
+        
+        // Iterate over all vertices in the mesh
+        for (vertex_descriptor v : vertices(polygon)) {
+            Point P = get(CGAL::vertex_point, polygon, v);
+
+            double area_PBC = CGAL::sqrt(CGAL::squared_area(P, B, C));
+            double area_PCA = CGAL::sqrt(CGAL::squared_area(P, C, A));
+            double area_PAB = CGAL::sqrt(CGAL::squared_area(P, A, B));
+
+            double u = area_PBC / area_ABC;
+            double vu = area_PCA / area_ABC;
+            double w = area_PAB / area_ABC;
+
+            if(std::abs(u + vu + w - 1) < 1e-6)
+            {
+                bary_coords[0] = u;
+                bary_coords[1] = vu;
+                bary_coords[2] = w;
+                barycentric_coordinates.push_back(bary_coords);
+            }
+
+                std::cout << "Vertex " << P 
+                          << " is inside triangle " << triangle.first 
+                          << " with barycentric coordinates: (" 
+                          << u << ", " << vu << ", " << w << ")" << std::endl;
+
+                
+            }
+        }
+        std::cout << "Barycentric coordinates computed successfully." << std::endl;
+    }

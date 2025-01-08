@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
     discretizedCurveTarget = curve.discretizeCurve(curveTarget, discretizedCurveTarget, numPoints);
 
-    std::cout << "Curve discretized successfully." << std::endl;
+    std::cout << "Curves discretized successfully." << std::endl;
     projectedCurve = curve.projectPoints(discretizedCurveSource, discretizedCurveTarget, projectedCurve);
     std::cout << "Points projected successfully onto the target curve." << std::endl;
 
@@ -48,12 +48,16 @@ int main(int argc, char **argv)
     triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource);
     
     //print triangles
-    for (const auto& triangle : triangles) {
-        std::cout << "Triangle: " << triangle.first << std::endl;
-        for (const auto& point : triangle.second) {
-            std::cout << "Point: " << point << std::endl;
-        }
-    }
+
+    // for (const auto& triangle : triangles) {
+    //     std::cout << "Triangle: " << triangle.first << std::endl;
+    //     for (const auto& point : triangle.second) {
+    //         std::cout << "Point: " << point << std::endl;
+    //     }
+    // }
+
+    meshUtil.computeBarycentric_coordinates(polygonSource, triangles, barycentric_coordinates);
+
 
     //meshUtil.computeBarycentric_coordinates(polygonSource, curveRef, barycentric_coordinates);
    
