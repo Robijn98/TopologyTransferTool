@@ -33,7 +33,7 @@ TEST(MeshUtility, ComputeBarycentricCoordinates)
     polygon.add_vertex(Point(0.75, 0.25, 0)); 
 
     // Vector to store the barycentric coordinates
-    std::vector<std::array<double, 3>> barycentric_coordinates;
+    std::vector<std::tuple<std::string, std::array<double, 3>, double>> barycentric_coordinates;
 
     // Create meshUtility object and call computeBarycentric_coordinates
     meshUtility meshUtil;
@@ -43,14 +43,17 @@ TEST(MeshUtility, ComputeBarycentricCoordinates)
     ASSERT_EQ(barycentric_coordinates.size(), 5);
 
     // Barycentric coordinates for the first point (0.25, 0.25, 0)
-    EXPECT_NEAR(barycentric_coordinates[3][0], 0.5, 1e-6);
-    EXPECT_NEAR(barycentric_coordinates[3][1], 0.25, 1e-6);
-    EXPECT_NEAR(barycentric_coordinates[3][2], 0.25, 1e-6);
+    std::array<double, 3> coords_3 = std::get<1>(barycentric_coordinates[3]);
+
+    EXPECT_NEAR(coords_3[0], 0.5, 1e-6);
+    EXPECT_NEAR(coords_3[1], 0.25, 1e-6);
+    EXPECT_NEAR(coords_3[2], 0.25, 1e-6);
 
     // Barycentric coordinates for the second point (0.75, 0.25, 0)
-    EXPECT_NEAR(barycentric_coordinates[4][0], 0.0, 1e-6);
-    EXPECT_NEAR(barycentric_coordinates[4][1], 0.75, 1e-6);
-    EXPECT_NEAR(barycentric_coordinates[4][2], 0.25, 1e-6);
+    std::array<double, 3> coords_4 = std::get<1>(barycentric_coordinates[4]);
+    EXPECT_NEAR(coords_4[0], 0.0, 1e-6);
+    EXPECT_NEAR(coords_4[1], 0.75, 1e-6);
+    EXPECT_NEAR(coords_4[2], 0.25, 1e-6);
 
 }
 

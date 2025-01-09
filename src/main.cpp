@@ -30,8 +30,8 @@ int main(int argc, char **argv)
     std::vector<Point> discretizedCurveTarget;
     std::vector<Point> projectedCurve;
 
-    curve.loadCurve("files/normal_sphere_export.obj", polygonSource, curveSource);
-    curve.loadCurve("files/deformed_sphere_line.obj", polygonTarget, curveTarget);
+    curve.loadCurve("files/normal_sphere_export.obj", curveSource);
+    curve.loadCurve("files/deformed_sphere_line.obj", curveTarget);
 
     int numPoints = 10; 
     discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
     //mesh utility
     meshUtility meshUtil;
-    std::vector<std::array<double, 3>> barycentric_coordinates;
+    std::vector<std::tuple<std::string, std::array<double, 3>, double>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
     triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, 1e-3, 1e-3);
     

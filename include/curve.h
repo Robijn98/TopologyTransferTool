@@ -17,7 +17,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 class Curve
 {
     public:
-        bool loadCurve(std::string filename,  Polygon_mesh &polygon,std::vector<Point> &curve);
+        bool loadCurve(std::string filename, std::vector<Point> &curve);
         std::vector<Point> discretizeCurve(std::vector<Point> &curve, std::vector<Point> &curveOut, int numPoints);
         std::vector<Point> projectPoints(std::vector<Point> &curveSource, std::vector<Point> &curveTarget, std::vector<Point> &projectedCurve);
     

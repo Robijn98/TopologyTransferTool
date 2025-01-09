@@ -27,7 +27,7 @@ class meshUtility
 {
     public:
         std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon, double z_threshold, double y_threshold);
-        void computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles, std::vector<std::array<double, 3>> &barycentric_coordinates);
+        void computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles,  std::vector<std::tuple<std::string, std::array<double, 3>, double>> &barycentric_coordinates);
         void initialWrapping(Polygon_mesh &polygonSource, Polygon_mesh &polygonTarget, std::vector<Point> &curveRef, std::vector<double> &barycentric_coordinates);
 
     private:

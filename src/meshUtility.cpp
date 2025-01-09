@@ -147,55 +147,62 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     return triangles;
 }
 
-void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles, std::vector<std::array<double, 3>> &barycentric_coordinates)
+void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles,  std::vector<std::tuple<std::string, std::array<double, 3>, double>> &barycentric_coordinates)
 {
     Mesh mesh; 
     mesh.triangulateMesh(polygon);
     //Create an AABB tree for the mesh
     AABB_Tree tree(faces(polygon).first, faces(polygon).second, polygon);
+    
+    
     //get the vertices that are inside each triangle
     for(const auto& triangle : triangles) {
+        const std::string &triangle_id = triangle.first;
         std::array<Point, 3> triangle_points = triangle.second;
         const Point &A = triangle_points[0];
         const Point &B = triangle_points[1];
         const Point &C = triangle_points[2];  
 
+        CGAL::Plane_3<Kernel> plane(A, B, C);
+
         double area_ABC = CGAL::sqrt(CGAL::squared_area(A, B, C));
 
         // Create a vector to store the barycentric coordinates
+
         std::array<double, 3> bary_coords;
         
         // Iterate over all vertices in the mesh
-        for (vertex_descriptor v : vertices(polygon)) {
+        for (vertex_descriptor v : vertices(polygon)) 
+        {
+            
             Point P = get(CGAL::vertex_point, polygon, v);
+            Point P_projected = plane.projection(P);
 
-            double area_PBC = CGAL::sqrt(CGAL::squared_area(P, B, C));
-            double area_PCA = CGAL::sqrt(CGAL::squared_area(P, C, A));
-            double area_PAB = CGAL::sqrt(CGAL::squared_area(P, A, B));
+            double distance_to_plane = CGAL::sqrt(CGAL::squared_distance(P, P_projected));
+
+            double area_PBC = CGAL::sqrt(CGAL::squared_area(P_projected, B, C));
+            double area_PCA = CGAL::sqrt(CGAL::squared_area(P_projected, C, A));
+            double area_PAB = CGAL::sqrt(CGAL::squared_area(P_projected, A, B));
 
             double u = area_PBC / area_ABC;
             double vu = area_PCA / area_ABC;
             double w = area_PAB / area_ABC;
 
-            if (u >= 0 && vu >= 0 && w >= 0 && std::abs(u + vu + w - 1) < 1)
+            if (u >= 0 && vu >= 0 && w >= 0 && std::abs(u + vu + w - 1) < 1e-6)
             {
                 bary_coords[0] = u;
                 bary_coords[1] = vu;
                 bary_coords[2] = w;
-                barycentric_coordinates.push_back(bary_coords);
+                barycentric_coordinates.push_back(std::make_tuple(triangle_id, bary_coords, distance_to_plane));
             }
 
-                // std::cout << "Vertex " << P 
-                //           << " is inside triangle " << triangle.first 
-                //           << " with barycentric coordinates: (" 
-                //           << u << ", " << vu << ", " << w << ")" << std::endl;
-
-                
             }
         }
-    // Print the barycentric coordinates with vertex 
-    for(const auto& coords : barycentric_coordinates) {
-        std::cout << "Barycentric coordinates computed successfully." << std::endl;
-    }
 
+        for (const auto &barycentric : barycentric_coordinates) {
+            std::cout << "Triangle: " << std::get<0>(barycentric) << std::endl;
+            std::cout << "Barycentric coordinates: " << std::get<1>(barycentric)[0] << ", " << std::get<1>(barycentric)[1] << ", " << std::get<1>(barycentric)[2] << std::endl;
+            std::cout << "Distance to plane: " << std::get<2>(barycentric) << std::endl;
+        }
 
+}

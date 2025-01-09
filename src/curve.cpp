@@ -6,7 +6,7 @@
 #include <vector>
 
 
-bool Curve::loadCurve(std::string filename, Polygon_mesh &polygon, std::vector<Point> &curve)
+bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
  {
   std::ifstream file(filename);
     if (!file.is_open())
