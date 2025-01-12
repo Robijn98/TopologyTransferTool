@@ -212,3 +212,45 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
         std::cout << "Barycentric coordinates computed successfully." << std::endl;
 
 }
+
+void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget , std::map<std::string, std::array<Point, 3>> &projected_points)
+{
+    if(trianglesSource.size() != trianglesTarget.size())
+    {
+        std::cerr << "Invalid input at projectTrianglePoints, not same amount of triangles" << std::endl;
+        return;
+    }
+
+    for(const auto &[key, sourceTriangle] : trianglesSource)
+    {
+        auto targetTriangleIt = trianglesTarget.find(key);
+        
+        if(targetTriangleIt == trianglesTarget.end())
+        {
+            std::cerr << "Invalid input at projectTrianglePoints, triangle not found" << std::endl;
+            return;
+        }
+
+    
+    const auto &targetTriangle = targetTriangleIt->second;
+    std::array<Point, 3> projectedTriangle;
+    
+    for(size_t j = 0; j < 3; j++)
+    {
+        CGAL::Vector_3<Kernel> displacement = targetTriangle[j] - sourceTriangle[j];
+        projectedTriangle[j] = Point(sourceTriangle[j].x() + displacement.x(), 
+                            sourceTriangle[j].y() + displacement.y(), 
+                            sourceTriangle[j].z() + displacement.z());
+    
+    }
+    
+    projected_points[key] = projectedTriangle;
+}
+    std::cout << "Triangle points: " << projected_points.size() << " projected successfully." << std::endl;
+}
+
+
+void meshUtility::initialWrapping(Polygon_mesh &polygonSource, Polygon_mesh &polygonTarget, std::map<std::string, std::array<Point, 3>> trianglesTarget, std::vector<double> &barycentric_coordinates_source)
+{
+    std::cout << "Initial wrapping started" << std::endl;
+}
