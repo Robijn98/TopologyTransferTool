@@ -75,8 +75,8 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
         //     std::cout << "curveVertex: " << point << std::endl;
         // }
             
+        std::cout << "Curve: " << filename << " loaded succesfully"  << std::endl;        
         
-
     } 
 
  }
@@ -127,6 +127,9 @@ std::vector<Point> Curve::discretizeCurve(std::vector<Point> &curve, std::vector
     }
 
     }
+    //print curve name
+    std::cout << "Curve discretized succesfully" << std::endl;
+    
     return curveOut;
     
 }
@@ -155,6 +158,8 @@ std::vector<Point> Curve:: projectPoints(std::vector<Point> &curveSource, std::v
         projectedCurve.push_back(newPoint);
         //std::cerr<< curveSource[i] << std::endl;
     }
+    std::cout << "Curve points projected succesfully" << std::endl;
+
     return projectedCurve;
 }
 

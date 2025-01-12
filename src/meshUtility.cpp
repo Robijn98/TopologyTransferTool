@@ -144,6 +144,8 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
     triangles["triangle8"] = {midpoint_left_xz, midpoint_bottom_xy, intersection2};
 
+    std::cout << "Mesh divided successfully into: "<< triangles.size() << " triangles" << std::endl;
+
     return triangles;
 }
 
@@ -199,10 +201,14 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
             }
         }
 
-        for (const auto &barycentric : barycentric_coordinates) {
-            std::cout << "Triangle: " << std::get<0>(barycentric) << std::endl;
-            std::cout << "Barycentric coordinates: " << std::get<1>(barycentric)[0] << ", " << std::get<1>(barycentric)[1] << ", " << std::get<1>(barycentric)[2] << std::endl;
-            std::cout << "Distance to plane: " << std::get<2>(barycentric) << std::endl;
-        }
+        // //print barycentric coordinates
+
+        // for (const auto &barycentric : barycentric_coordinates) {
+        //     std::cout << "Triangle: " << std::get<0>(barycentric) << std::endl;
+        //     std::cout << "Barycentric coordinates: " << std::get<1>(barycentric)[0] << ", " << std::get<1>(barycentric)[1] << ", " << std::get<1>(barycentric)[2] << std::endl;
+        //     std::cout << "Distance to plane: " << std::get<2>(barycentric) << std::endl;
+        // }
+        
+        std::cout << "Barycentric coordinates computed successfully." << std::endl;
 
 }

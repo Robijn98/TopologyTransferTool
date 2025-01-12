@@ -37,33 +37,26 @@ int main(int argc, char **argv)
     discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
     discretizedCurveTarget = curve.discretizeCurve(curveTarget, discretizedCurveTarget, numPoints);
 
-    std::cout << "Curves discretized successfully." << std::endl;
     projectedCurve = curve.projectPoints(discretizedCurveSource, discretizedCurveTarget, projectedCurve);
-    std::cout << "Points projected successfully onto the target curve." << std::endl;
 
     //mesh utility
     meshUtility meshUtil;
     std::vector<std::tuple<std::string, std::array<double, 3>, double>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
     triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, 1e-3, 1e-3);
-    
-    // print triangles
 
-    // for (const auto& triangle : triangles) {
-    //     std::cout << "Triangle: " << triangle.first << std::endl;
-    //     for (const auto& point : triangle.second) {
-    //         std::cout << "Point: " << point << std::endl;
-    //     }
-    // }
+    std::map<std::string, std::array<Point, 3>> trianglesTarget;
+    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.1, 0.1);
+
+
 
     meshUtil.computeBarycentric_coordinates(polygonSource, triangles, barycentric_coordinates);
-
    
     //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     
     
-    //mesh.writeMesh("files/output.obj", polygonSource);
-    /*
+    mesh.writeMesh("files/output.obj", polygonSource);
+    
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
     {
@@ -92,7 +85,7 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("files/deformed_sphere_export.obj");
+    std::string oname("files/output.obj");
 
     if(argc ==2)
     {
@@ -113,6 +106,6 @@ int main(int argc, char **argv)
     window.show();
 
     return app.exec();
-    */
+    
    return 0;
 }
