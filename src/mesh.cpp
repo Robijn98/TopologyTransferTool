@@ -9,7 +9,7 @@ bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
 {
     if(std::filesystem::is_empty(filename))
   {
-    std::cerr << "Empty file." << std::endl;
+    std::cerr << "Empty file.\n" ;
     return 0;
   }
 
@@ -37,7 +37,7 @@ bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
   //load mesh from file using CGAL
   if(!PMP::IO::read_polygon_mesh(tempFile, polygon))
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input.\n";
     std::remove(tempFile.c_str());
     return 0;
   }
@@ -57,7 +57,7 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
   {
     if(PMP::is_non_manifold_vertex(v, polygon))
     {
-      std::cout << "vertex " << v << " is non-manifold" << std::endl;
+      std::cout << "vertex " << v << " is non-manifold\n";
       ++counter;
 
     }
@@ -65,7 +65,7 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
 
   if (counter > 0)
   {
-    std::cout << "NON MANIFOLD" << std::endl;
+    std::cout << "NON MANIFOLD\n";
     return 0;
   }
 
@@ -76,7 +76,7 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
       num_vertices++;
     }
     if (num_vertices != 3 && num_vertices != 4) {
-      std::cout << "face " << f << " is not a triangle or a quad" << std::endl;
+      std::cout << "face " << f << " is not a triangle or a quad\n";
       return 0;
     }
   }
@@ -84,26 +84,15 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
     return 1;
 }
 
-void Mesh::writeMesh(std::string filename, Polygon_mesh &polygon)
-{
-  if (filename.empty())
-  {
-    std::cout << "new file" << std::endl;
-    std::ofstream{filename};
-  }
-  CGAL::IO::write_OBJ(filename, polygon);
-
-}
-
 void Mesh::triangulateMesh(Polygon_mesh &polygon)
 {
   if(!CGAL::is_triangle_mesh(polygon))
       {
-      std::cout << "Input mesh is not triangulated." << std::endl;
+      std::cout << "Input mesh is not triangulated.\n";
       PMP::triangulate_faces(polygon);
-      std::cout << "Mesh triangulated." << std::endl;
+      std::cout << "Mesh triangulated.\n";
       }
   else
-    std::cout << "Input mesh is already triangulated." << std::endl;  
+    std::cout << "Input mesh is already triangulated.\n";  
  }
  

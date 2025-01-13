@@ -28,7 +28,6 @@ class Mesh
 public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
-    void writeMesh(std::string filename, Polygon_mesh &polygon);
     void triangulateMesh(Polygon_mesh &polygon);
 private:
     std::string filename;

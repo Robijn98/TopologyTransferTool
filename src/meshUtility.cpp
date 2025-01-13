@@ -43,10 +43,10 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         }
     }
     
-    // std::cerr << "Number of points on XY midline: " << xy_midline_points.size() << std::endl;   
+    // std::cerr << "Number of points on XY midline: " << xy_midline_points.size() << "\n";   
     // //print coordinates
     // for(const auto& point : xy_midline_points) {
-    //     std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    //     std::cout << "spaceLocator -p " << point << ";\n";
     // }
 
     // Step 2: Cut the mesh along the XZ plane
@@ -61,10 +61,10 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         }
     }
     
-    // std::cerr << "Number of points on XZ midline: " << xz_midline_points.size() << std::endl;
+    // std::cerr << "Number of points on XZ midline: " << xz_midline_points.size() << "\n";
     // //print coordinates
     // for(const auto& point : xz_midline_points) {
-    //       std::cout << "spaceLocator -p " << point << ";" << std::endl;
+    //       std::cout << "spaceLocator -p " << point << ";" << "\n";
     //  }
 
     
@@ -144,7 +144,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
     triangles["triangle8"] = {midpoint_left_xz, midpoint_bottom_xy, intersection2};
 
-    std::cout << "Mesh divided successfully into: "<< triangles.size() << " triangles" << std::endl;
+    std::cout << "Mesh divided successfully into: "<< triangles.size() << " triangles\n";
 
     return triangles;
 }
@@ -212,7 +212,7 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
 //                       << "), Distance: " << distance << "\n";
 //     }
         
-        std::cout << "Barycentric coordinates computed successfully." << std::endl;
+        std::cout << "Barycentric coordinates computed successfully\n";
 
 }
 
@@ -222,7 +222,7 @@ void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 
 {
     if(trianglesSource.size() != trianglesTarget.size())
     {
-        std::cerr << "Invalid input at projectTrianglePoints, not same amount of triangles" << std::endl;
+        std::cerr << "Invalid input at projectTrianglePoints, not same amount of triangles\n";
         return;
     }
 
@@ -232,7 +232,7 @@ void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 
         
         if(targetTriangleIt == trianglesTarget.end())
         {
-            std::cerr << "Invalid input at projectTrianglePoints, triangle not found" << std::endl;
+            std::cerr << "Invalid input at projectTrianglePoints, triangle not found\n";
             return;
         }
 
@@ -251,7 +251,7 @@ void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 
     
     projected_points[key] = projectedTriangle;
 }
-    std::cout << "Triangle points: " << projected_points.size() << " projected successfully." << std::endl;
+    std::cout << "Triangle points: " << projected_points.size() << " projected successfully\n";
 }
 
 
@@ -272,7 +272,7 @@ std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, 
 {
     if(trianglesSource.size() != trianglesTarget.size())
     {
-        std::cerr << "Invalid input at initialWrapping, not same amount of triangles" << std::endl;
+        std::cerr << "Invalid input at initialWrapping, not same amount of triangles\n";
         return {};
     }
 
@@ -284,7 +284,7 @@ std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, 
         
         if(targetTriangleIt == trianglesTarget.end())
             {
-                std::cerr << "Invalid input at initialWrapping, triangle not found" << std::endl;
+                std::cerr << "Invalid input at initialWrapping, triangle not found\n";
                 continue;
             }
     
@@ -302,7 +302,7 @@ std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, 
 
         if(baryIt == barycentric_coordinatesSource[key].end())
         {
-            std::cerr << "Invalid input at initialWrapping, barycentric coordinates not found" << std::endl;
+            std::cerr << "Invalid input at initialWrapping, barycentric coordinates not found\n";
             continue;
         }
 
@@ -316,7 +316,7 @@ std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, 
         WrappedPoints[key] = wrappedPoint;
 
     }
-    std::cout << "Initial wrapping completed successfully." << std::endl;
+    std::cout << "Initial wrapping completed successfully\n";
     return WrappedPoints;
 }
 

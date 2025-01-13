@@ -32,11 +32,3 @@ TEST(Mesh, non_quad_Mesh)
 
 }
 
-TEST(Mesh, writeMesh)
-{
-    Mesh mesh;
-    Polygon_mesh polygon;
-    mesh.loadMesh("files/deformed_sphere_export.obj", polygon);
-    mesh.writeMesh("files/output.obj", polygon);
-    EXPECT_TRUE("files/output.obj");
-}

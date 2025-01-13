@@ -5,6 +5,7 @@
 #include "mesh.h"
 #include "meshUtility.h"
 #include "curve.h"
+#include "output.h"
 
 int main(int argc, char **argv)
 {
@@ -48,21 +49,24 @@ int main(int argc, char **argv)
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
     trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.1, 0.1);
 
-
-
     meshUtil.computeBarycentric_coordinates(polygonSource, triangles, barycentric_coordinates);
    
     //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     
-    
-    mesh.writeMesh("files/output.obj", polygonSource);
+    //output
+    Output output;
+    //output.writeMesh("files/output.obj", polygonSource);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
     {
-    std::cout << "Input mesh is not triangulated." << std::endl;
-    throw std::runtime_error("Input mesh is not triangulated.");
+    throw std::runtime_error("Input mesh is not triangulated");
     }
+    else
+    {
+    std::cout << "Input mesh is triangulated, continuing with viewer\n";
+    }
+
     
     
     QApplication app(argc, argv);
