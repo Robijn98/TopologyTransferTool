@@ -17,12 +17,8 @@ TEST(Output, updateFileWithWrap)
 {
     Mesh mesh;
     Output output;
-    std::map<std::string, Point> WrappedPoints;
-    WrappedPoints["point1"] = Point(1, 2, 3);
-    for(const auto &[key, point] : WrappedPoints)
-    {
-        std::cout << key << " " << point << "\n";
-    }
+    std::map<std::string, std::vector<Point>> WrappedPoints;
+    WrappedPoints["point1"] = {Point(1, 2, 3)};
 
     output.updateFileWithWrap("files/output.obj", WrappedPoints);
     //read the file and check if the point is there
@@ -38,4 +34,15 @@ TEST(Output, updateFileWithWrap)
         }
     }
     EXPECT_TRUE(found == true);
+    
+    found = false;
+    while (std::getline(file, line))
+    {
+        if (line.find("v 1 5 3") != std::string::npos)
+        {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found == false);
 }

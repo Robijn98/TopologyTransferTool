@@ -53,16 +53,11 @@ int main(int argc, char **argv)
     
     std::map<std::string, std::vector<Point>> WrappedPoints;
     WrappedPoints = meshUtil.initialWrapping(triangles, trianglesTarget, barycentric_coordinates);
-    // for(const auto &[key, points] : WrappedPoints)
-    // {
-    //     for(const auto &point : points)
-    //     {
-    //         std::cout << key << " " << point << "\n";
-    //     }
-    // }
+
     //output
     Output output;
-    //output.writeMesh("files/output.obj", polygonSource);
+    output.writeMesh("files/output_test.obj", polygonSource);
+    output.updateFileWithWrap("files/output_test.obj", WrappedPoints);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
@@ -96,7 +91,7 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("files/output.obj");
+    std::string oname("files/output_test.obj");
 
     if(argc ==2)
     {

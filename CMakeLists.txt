@@ -49,6 +49,8 @@ target_sources(Wrap PRIVATE ${CMAKE_SOURCE_DIR}/src/main.cpp
                             ${CMAKE_SOURCE_DIR}/include/curve.h
                             ${CMAKE_SOURCE_DIR}/include/meshUtility.h
                             ${CMAKE_SOURCE_DIR}/src/meshUtility.cpp
+                            ${CMAKE_SOURCE_DIR}/include/output.h
+                            ${CMAKE_SOURCE_DIR}/src/output.cpp
                             ${PROJECT_SOURCE_DIR}/src/NGLScene.cpp  
                             ${PROJECT_SOURCE_DIR}/src/NGLSceneMouseControls.cpp  
                             ${PROJECT_SOURCE_DIR}/include/NGLScene.h

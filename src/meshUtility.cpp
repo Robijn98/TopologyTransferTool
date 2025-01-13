@@ -297,7 +297,7 @@ std::map<std::string, std::vector<Point>> meshUtility::initialWrapping(std::map<
                 baryCoords[2] * targetTriangle[2];
 
             WrappedPoints[key].push_back(wrappedPoint);
-            std::cout << "Wrapped point: " << key << " " << wrappedPoint << "\n";
+            //std::cout << "Wrapped point: " << key << " " << wrappedPoint << "\n";
         }
     }
 
