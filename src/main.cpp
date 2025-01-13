@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
     //mesh utility
     meshUtility meshUtil;
-    std::vector<std::tuple<std::string, std::array<double, 3>, double>> barycentric_coordinates;
+    std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
     triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, 1e-3, 1e-3);
 

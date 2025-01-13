@@ -149,7 +149,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     return triangles;
 }
 
-void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles,  std::vector<std::tuple<std::string, std::array<double, 3>, double>> &barycentric_coordinates)
+void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles, std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinates)
 {
     Mesh mesh; 
     mesh.triangulateMesh(polygon);
@@ -195,23 +195,28 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
                 bary_coords[0] = u;
                 bary_coords[1] = vu;
                 bary_coords[2] = w;
-                barycentric_coordinates.push_back(std::make_tuple(triangle_id, bary_coords, distance_to_plane));
+                barycentric_coordinates[triangle_id].emplace_back(bary_coords, distance_to_plane);
             }
 
             }
         }
 
-        // //print barycentric coordinates
+// //print barycentric coordinates
 
-        // for (const auto &barycentric : barycentric_coordinates) {
-        //     std::cout << "Triangle: " << std::get<0>(barycentric) << std::endl;
-        //     std::cout << "Barycentric coordinates: " << std::get<1>(barycentric)[0] << ", " << std::get<1>(barycentric)[1] << ", " << std::get<1>(barycentric)[2] << std::endl;
-        //     std::cout << "Distance to plane: " << std::get<2>(barycentric) << std::endl;
-        // }
+//     for (const auto &[triangle_id, coords] : barycentric_coordinates
+// ) 
+//     {
+//         std::cout << "Triangle: " << triangle_id << "\n";
+//         for (const auto &[bary_coords, distance] : coords) {
+//             std::cout << "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2]
+//                       << "), Distance: " << distance << "\n";
+//     }
         
         std::cout << "Barycentric coordinates computed successfully." << std::endl;
 
 }
+
+
 
 void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget , std::map<std::string, std::array<Point, 3>> &projected_points)
 {
@@ -250,7 +255,68 @@ void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 
 }
 
 
-void meshUtility::initialWrapping(Polygon_mesh &polygonSource, Polygon_mesh &polygonTarget, std::map<std::string, std::array<Point, 3>> trianglesTarget, std::vector<double> &barycentric_coordinates_source)
+Point operator*(double scalar, const Point& point)
 {
-    std::cout << "Initial wrapping started" << std::endl;
+    // Assuming Point is a 3D point with x(), y(), z() methods
+    return Point(scalar * point.x(), scalar * point.y(), scalar * point.z());
 }
+
+Point operator+(const Point& p1, const Point& p2)
+{
+    return Point(p1.x() + p2.x(), p1.y() + p2.y(), p1.z() + p2.z());
+}
+
+
+
+std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget, std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinatesSource)
+{
+    if(trianglesSource.size() != trianglesTarget.size())
+    {
+        std::cerr << "Invalid input at initialWrapping, not same amount of triangles" << std::endl;
+        return {};
+    }
+
+    std::map<std::string, Point> WrappedPoints;
+
+    for(const auto &[key, sourceTriangle] : trianglesSource)
+    {
+        auto targetTriangleIt = trianglesTarget.find(key);
+        
+        if(targetTriangleIt == trianglesTarget.end())
+            {
+                std::cerr << "Invalid input at initialWrapping, triangle not found" << std::endl;
+                continue;
+            }
+    
+        const auto &targetTriangle = targetTriangleIt->second;
+
+        auto baryIt = std::find_if(
+            barycentric_coordinatesSource[key].begin(),
+            barycentric_coordinatesSource[key].end(),
+            [&](const auto &entry)
+            {
+                const auto &[baryCoords, distance] = entry;
+                return distance < 1e-6;
+            }
+        );
+
+        if(baryIt == barycentric_coordinatesSource[key].end())
+        {
+            std::cerr << "Invalid input at initialWrapping, barycentric coordinates not found" << std::endl;
+            continue;
+        }
+
+        const auto &[baryCoords, distance] = *baryIt;
+
+        Point wrappedPoint = 
+            baryCoords[0] * targetTriangle[0] +
+            baryCoords[1] * targetTriangle[1] +
+            baryCoords[2] * targetTriangle[2];   
+
+        WrappedPoints[key] = wrappedPoint;
+
+    }
+    std::cout << "Initial wrapping completed successfully." << std::endl;
+    return WrappedPoints;
+}
+
