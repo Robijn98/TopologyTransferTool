@@ -50,9 +50,16 @@ int main(int argc, char **argv)
     trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.1, 0.1);
 
     meshUtil.computeBarycentric_coordinates(polygonSource, triangles, barycentric_coordinates);
-   
-    //meshUtil.initialWrapping(polygonSource, polygonTarget, curveRef, barycentric_coordinates);
     
+    std::map<std::string, std::vector<Point>> WrappedPoints;
+    WrappedPoints = meshUtil.initialWrapping(triangles, trianglesTarget, barycentric_coordinates);
+    // for(const auto &[key, points] : WrappedPoints)
+    // {
+    //     for(const auto &point : points)
+    //     {
+    //         std::cout << key << " " << point << "\n";
+    //     }
+    // }
     //output
     Output output;
     //output.writeMesh("files/output.obj", polygonSource);

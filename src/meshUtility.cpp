@@ -203,15 +203,14 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, std::map
 
 // //print barycentric coordinates
 
-//     for (const auto &[triangle_id, coords] : barycentric_coordinates
-// ) 
+//     for (const auto &[triangle_id, coords] : barycentric_coordinates) 
 //     {
 //         std::cout << "Triangle: " << triangle_id << "\n";
 //         for (const auto &[bary_coords, distance] : coords) {
 //             std::cout << "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2]
 //                       << "), Distance: " << distance << "\n";
 //     }
-        
+//     }
         std::cout << "Barycentric coordinates computed successfully\n";
 
 }
@@ -268,55 +267,40 @@ Point operator+(const Point& p1, const Point& p2)
 
 
 
-std::map<std::string, Point> meshUtility::initialWrapping(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget, std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinatesSource)
+std::map<std::string, std::vector<Point>> meshUtility::initialWrapping(std::map<std::string, std::array<Point, 3>> trianglesSource,std::map<std::string, std::array<Point, 3>> trianglesTarget, std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinatesSource)
 {
-    if(trianglesSource.size() != trianglesTarget.size())
+    if (trianglesSource.size() != trianglesTarget.size())
     {
         std::cerr << "Invalid input at initialWrapping, not same amount of triangles\n";
         return {};
     }
 
-    std::map<std::string, Point> WrappedPoints;
+    std::map<std::string, std::vector<Point>> WrappedPoints;
 
-    for(const auto &[key, sourceTriangle] : trianglesSource)
+    for (const auto &[key, sourceTriangle] : trianglesSource)
     {
         auto targetTriangleIt = trianglesTarget.find(key);
-        
-        if(targetTriangleIt == trianglesTarget.end())
-            {
-                std::cerr << "Invalid input at initialWrapping, triangle not found\n";
-                continue;
-            }
-    
-        const auto &targetTriangle = targetTriangleIt->second;
 
-        auto baryIt = std::find_if(
-            barycentric_coordinatesSource[key].begin(),
-            barycentric_coordinatesSource[key].end(),
-            [&](const auto &entry)
-            {
-                const auto &[baryCoords, distance] = entry;
-                return distance < 1e-6;
-            }
-        );
-
-        if(baryIt == barycentric_coordinatesSource[key].end())
+        if (targetTriangleIt == trianglesTarget.end())
         {
-            std::cerr << "Invalid input at initialWrapping, barycentric coordinates not found\n";
+            std::cerr << "Invalid input at initialWrapping, triangle not found\n";
             continue;
         }
 
-        const auto &[baryCoords, distance] = *baryIt;
+        const auto &targetTriangle = targetTriangleIt->second;
 
-        Point wrappedPoint = 
-            baryCoords[0] * targetTriangle[0] +
-            baryCoords[1] * targetTriangle[1] +
-            baryCoords[2] * targetTriangle[2];   
+        for (const auto &[baryCoords, distance] : barycentric_coordinatesSource[key])
+        {
+            Point wrappedPoint =
+                baryCoords[0] * targetTriangle[0] +
+                baryCoords[1] * targetTriangle[1] +
+                baryCoords[2] * targetTriangle[2];
 
-        WrappedPoints[key] = wrappedPoint;
-
+            WrappedPoints[key].push_back(wrappedPoint);
+            std::cout << "Wrapped point: " << key << " " << wrappedPoint << "\n";
+        }
     }
+
     std::cout << "Initial wrapping completed successfully\n";
     return WrappedPoints;
 }
-
