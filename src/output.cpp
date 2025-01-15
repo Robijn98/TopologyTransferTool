@@ -14,7 +14,7 @@ void Output::writeMesh(std::string filename, Polygon_mesh &polygon)
 
 }
 
-void Output::updateFileWithWrap(std::string filename, std::map<std::string, std::vector<Point>> WrappedPoints)
+void Output::updateFileWithWrap(std::string filename, std::map<int, std::vector<Point>> WrappedPoints)
 {
   std::cout<< "Updating file with wrapped points\n";
   std::ifstream infile(filename);
@@ -28,6 +28,8 @@ void Output::updateFileWithWrap(std::string filename, std::map<std::string, std:
       std::string prefix;
       std::istringstream iss(line);
       iss >> prefix;
+
+
 
       if(prefix != "v")
       {
@@ -43,9 +45,8 @@ void Output::updateFileWithWrap(std::string filename, std::map<std::string, std:
             //we need to put all the vertex in the new file
             for(const auto &[key, point] : WrappedPoints)
             {
-              for(const auto &point : WrappedPoints[key])
+              for(const auto &point : point)
               {
-                //std::cout << key << " " << point << "\n";
                 outfile << "v " << point.x() << " " << point.y() << " " << point.z() << "\n";
               }
 

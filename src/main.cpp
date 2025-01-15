@@ -12,8 +12,8 @@ int main(int argc, char **argv)
     Mesh mesh;
     Polygon_mesh polygonSource;
     Polygon_mesh polygonTarget;
-    std::string filenameSource = "files/normal_sphere_export.obj";
-    std::string filenameTarget = "files/deformed_sphere_line.obj";
+    std::string filenameSource = "files/deformed_sphere_export.obj";
+    std::string filenameTarget = "files/deformed_sphere_export.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
     mesh.validateMesh(polygonSource);
@@ -23,41 +23,63 @@ int main(int argc, char **argv)
     mesh.validateMesh(polygonTarget);
     mesh.triangulateMesh(polygonTarget);
 
-    //curves
-    Curve curve;
-    std::vector<Point> curveSource;
-    std::vector<Point> curveTarget;
-    std::vector<Point> discretizedCurveSource;
-    std::vector<Point> discretizedCurveTarget;
-    std::vector<Point> projectedCurve;
+    // //curves
+    // Curve curve;
+    // std::vector<Point> curveSource;
+    // std::vector<Point> curveTarget;
+    // std::vector<Point> discretizedCurveSource;
+    // std::vector<Point> discretizedCurveTarget;
+    // std::vector<Point> projectedCurve;
 
-    curve.loadCurve("files/normal_sphere_export.obj", curveSource);
-    curve.loadCurve("files/deformed_sphere_line.obj", curveTarget);
+    // curve.loadCurve("files/deformed_sphere_export.obj", curveSource);
+    // curve.loadCurve("files/deformed_sphere_export.obj", curveTarget);
 
-    int numPoints = 10; 
-    discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
-    discretizedCurveTarget = curve.discretizeCurve(curveTarget, discretizedCurveTarget, numPoints);
+    // int numPoints = 10; 
+    // discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
+    // discretizedCurveTarget = curve.discretizeCurve(curveTarget, discretizedCurveTarget, numPoints);
 
-    projectedCurve = curve.projectPoints(discretizedCurveSource, discretizedCurveTarget, projectedCurve);
+    // projectedCurve = curve.projectPoints(discretizedCurveSource, discretizedCurveTarget, projectedCurve);
 
     //mesh utility
     meshUtility meshUtil;
-    std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> barycentric_coordinates;
+    std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
-    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, 1e-3, 1e-3);
+    Polygon_mesh debugMesh;
+
+    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh, 0.5, 0.5);
+
+    // //print triangles
+    // for(const auto &[key, triangle] : triangles)
+    // {
+    //     std::cout << "//Triangle: " << key << "\n";
+    //     for(const auto &point : triangle)
+    //     {
+    //         std::cout << "spaceLocator -p " << point << ";\n";
+    //     }
+    // }
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.1, 0.1);
+    //trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.5, 0.5);
 
-    meshUtil.computeBarycentric_coordinates(polygonSource, triangles, barycentric_coordinates);
+    meshUtil.computeBarycentric_coordinates(polygonSource, debugMesh, triangles, barycentric_coordinates);
+
+
+    // std::map<int, std::vector<Point>> WrappedPoints;
+    // WrappedPoints = meshUtil.initialWrapping(triangles, trianglesTarget, barycentric_coordinates);
     
-    std::map<std::string, std::vector<Point>> WrappedPoints;
-    WrappedPoints = meshUtil.initialWrapping(triangles, trianglesTarget, barycentric_coordinates);
+    //print wrapped points
+    // for(const auto &[vertexId, point] : WrappedPoints)
+    // {
+    //     for(const auto &point : point)
+    //     {
+    //         std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
+    //     }
+    // }
 
     //output
     Output output;
-    output.writeMesh("files/output_test.obj", polygonSource);
-    output.updateFileWithWrap("files/output_test.obj", WrappedPoints);
+    output.writeMesh("files/output.obj", debugMesh);
+    //output.updateFileWithWrap("files/output_test.obj", WrappedPoints);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
@@ -91,7 +113,7 @@ int main(int argc, char **argv)
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
     // now we are going to create our scene window
-    std::string oname("files/output_test.obj");
+    std::string oname("files/output.obj");
 
     if(argc ==2)
     {
