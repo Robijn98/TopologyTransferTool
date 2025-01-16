@@ -59,16 +59,6 @@ int main(int argc, char **argv)
     std::map<int, std::vector<Point>> WrappedPoints;
     WrappedPoints = meshUtil.initialWrapping(debugMesh, debugMesh2, polygonSource, barycentric_coordinates);
     
-    // //print wrapped points
-    // for(const auto &[vertexId, point] : WrappedPoints)
-    // {
-    //     for(const auto &point : point)
-    //     {
-    //         std::cout << "//VertexID: " << vertexId << "\n";
-    //         std::cout<< "spaceLocator -p " << point << ";\n";
-    //     }
-    // }
-
    
     //output
     Output output;

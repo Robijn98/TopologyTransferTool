@@ -28,6 +28,9 @@ class meshUtility
     public:
         std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double z_threshold, double y_threshold);
         
+        // void clampBarycentricCoordinates(double &u, double &v, double &w, const Point &P, 
+        // const Point &P0, const Point &P1, const Point &P2);
+        
         void computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, 
         std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinates);
         

@@ -135,15 +135,15 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     //make sure the triangles have the right normal
     //do it for triangle 0,2,5,7
 
-    //print
-    for(const auto& triangle : triangles)
-    {
-        std::cout << "//Triangle: " << triangle.first << "\n";
-        for(const auto& point : triangle.second)
-        {
-            std::cout << "spaceLocator -p " << point << ";\n";
-        }
-    }
+    // //print
+    // for(const auto& triangle : triangles)
+    // {
+    //     std::cout << "//Triangle: " << triangle.first << "\n";
+    //     for(const auto& point : triangle.second)
+    //     {
+    //         std::cout << "spaceLocator -p " << point << ";\n";
+    //     }
+    // }
 
 
     for(auto& triangle : triangles)
@@ -173,6 +173,8 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
     return triangles;
 }
+
+
 
 void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinates)
 {
@@ -228,12 +230,16 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
         // Barycentric coordinates
         double u_bary = area_PBC / area_ABC;
         double v_bary = area_PCA / area_ABC;
-        double w_bary = area_PAB / area_ABC;
+        double w_bary = area_PAB / area_ABC;        
+        
 
-        std::cout << "Vertex: " << v << " Closest Face Descriptor: " << closest_face_descriptor << "\n";
+        //print closest face to vertex
+        std::cout << "Closest face to vertex: " << v << " is: " << closest_face_descriptor << "\n";
+
+        
         //convert the closest face descriptor to a string
         // Check if the barycentric coordinates are valid (non-negative and sum to 1)
-        if (u_bary >= 0 && v_bary >= 0 && w_bary >= 0 && std::abs(u_bary + v_bary + w_bary - 1) < 1e-6)
+        if (u_bary >= -1e-6  && v_bary >= -1e-6  && w_bary >= -1e-6 && std::abs(u_bary + v_bary + w_bary - 1) < 1e-6)
         {
             std::string closest_face_descriptor_str = std::to_string(closest_face_descriptor);
             bary_coords = {u_bary, v_bary, w_bary};
@@ -241,16 +247,27 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
             processed_vertices.insert(v);  // Mark the vertex as processed
         }
         
-    }
+        //handle edgecases
+        else
+        {
+            std::string closest_face_descriptor_str = std::to_string(closest_face_descriptor);
+            bary_coords = {u_bary, v_bary, w_bary};
+            barycentric_coordinates[closest_face_descriptor_str].emplace_back(v, bary_coords, distance_to_plane);
+            
+            std::cout << "Invalid barycentric coordinates for vertex: " << v << "\n";
+        }
 
-    // Print barycentric coordinates
-    // for (const auto &[triangle_id, coords] : barycentric_coordinates) {
-    //     std::cout << "Face: " << triangle_id << "\n";
-    //     for (const auto &[vertex_id, bary_coords, distance] : coords) {
-    //         std::cout << "Vertex: " << vertex_id << 
-    //         "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2] << "), Distance: " << distance << "\n";
-    //     }
-    // }
+    }
+    
+
+    //Print barycentric coordinates
+    for (const auto &[triangle_id, coords] : barycentric_coordinates) {
+        std::cout << "Face: " << triangle_id << "\n";
+        for (const auto &[vertex_id, bary_coords, distance] : coords) {
+            std::cout << "Vertex: " << vertex_id << 
+            "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2] << "), Distance: " << distance << "\n";
+        }
+    }
 
     std::cout << "Barycentric coordinates computed successfully\n";
 }
@@ -345,38 +362,31 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
         }
     }
 
-    //print wrapped points
-    for(const auto &[vertexId, point] : WrappedPoints)
-    {
-        for(const auto &point : point)
-        {
-            std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
-        }
-    }
+
 
     std::cout << "Initial wrapping completed successfully\n";
     
 
-    //insert the vertices that are not wrapped from the source mesh //THIS IS FOR DEBUGGING < REMOVE LATER
-    for(
-        vertex_descriptor v : vertices(sourceMesh))
-    {
-        if(WrappedPoints.find(v) == WrappedPoints.end())
-        {
-            Point vertex_point = get(CGAL::vertex_point, sourceMesh, v);
-            WrappedPoints[v].push_back(vertex_point);
-        }
-    }
+    // //insert the vertices that are not wrapped from the source mesh //THIS IS FOR DEBUGGING < REMOVE LATER
+    // for(
+    //     vertex_descriptor v : vertices(sourceMesh))
+    // {
+    //     if(WrappedPoints.find(v) == WrappedPoints.end())
+    //     {
+    //         Point vertex_point = get(CGAL::vertex_point, sourceMesh, v);
+    //         WrappedPoints[v].push_back(vertex_point);
+    //     }
+    // }
     
-    //print wrapped points
-    for(const auto &[vertexId, point] : WrappedPoints)
-    {
-        for(const auto &point : point)
-        {
-            std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
+    // //print wrapped points
+    // for(const auto &[vertexId, point] : WrappedPoints)
+    // {
+    //     for(const auto &point : point)
+    //     {
+    //         std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
         
-        }
-    }
+    //     }
+    // }
 
     return WrappedPoints;
 }
