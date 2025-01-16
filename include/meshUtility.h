@@ -26,10 +26,19 @@ typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               hal
 class meshUtility
 {
     public:
-        std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon, double z_threshold, double y_threshold);
-        void computeBarycentric_coordinates(Polygon_mesh &polygon, std::map<std::string, std::array<Point, 3>> triangles,  std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinates);
-        void projectTrianglePoints(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget ,std::map<std::string, std::array<Point, 3>> &projected_points);
-        std::map<std::string, std::vector<Point>> initialWrapping(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget, std::map<std::string, std::vector<std::pair<std::array<double, 3>, double>>> &barycentric_coordinatesSource);
+        std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double z_threshold, double y_threshold);
+        
+        // void clampBarycentricCoordinates(double &u, double &v, double &w, const Point &P, 
+        // const Point &P0, const Point &P1, const Point &P2);
+        
+        void computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, 
+        std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinates);
+        
+        // void projectTrianglePoints(std::map<std::string, std::array<Point, 3>> trianglesSource, 
+        // std::map<std::string, std::array<Point, 3>> trianglesTarget ,std::map<std::string, std::array<Point, 3>> &projected_points);
+        
+        std::map<int, std::vector<Point>> initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh,
+        std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource);
 
     private:
 
