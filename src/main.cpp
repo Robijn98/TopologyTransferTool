@@ -45,41 +45,35 @@ int main(int argc, char **argv)
     std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
     Polygon_mesh debugMesh;
+    Polygon_mesh debugMesh2;
 
     triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh, 0.5, 0.5);
 
-    // //print triangles
-    // for(const auto &[key, triangle] : triangles)
-    // {
-    //     std::cout << "//Triangle: " << key << "\n";
-    //     for(const auto &point : triangle)
-    //     {
-    //         std::cout << "spaceLocator -p " << point << ";\n";
-    //     }
-    // }
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-    //trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.5, 0.5);
+    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2, 0.5, 0.5);
 
     meshUtil.computeBarycentric_coordinates(polygonSource, debugMesh, triangles, barycentric_coordinates);
 
 
-    // std::map<int, std::vector<Point>> WrappedPoints;
-    // WrappedPoints = meshUtil.initialWrapping(triangles, trianglesTarget, barycentric_coordinates);
+    std::map<int, std::vector<Point>> WrappedPoints;
+    WrappedPoints = meshUtil.initialWrapping(debugMesh, debugMesh2, polygonSource, barycentric_coordinates);
     
-    //print wrapped points
+    // //print wrapped points
     // for(const auto &[vertexId, point] : WrappedPoints)
     // {
     //     for(const auto &point : point)
     //     {
-    //         std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
+    //         std::cout << "//VertexID: " << vertexId << "\n";
+    //         std::cout<< "spaceLocator -p " << point << ";\n";
     //     }
     // }
 
+   
     //output
     Output output;
-    output.writeMesh("files/output.obj", debugMesh);
-    //output.updateFileWithWrap("files/output_test.obj", WrappedPoints);
+    output.writeMesh("files/output.obj", polygonSource);
+    output.updateFileWithWrap("files/output.obj", WrappedPoints);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))

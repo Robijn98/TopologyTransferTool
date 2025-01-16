@@ -33,42 +33,30 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 {
     // Step 1: Cut the mesh along the XY plane
     std::vector<Point> xy_midline_points;
-    //double z_threshold = 0.1; // Threshold for splitting along XY plane (based on Z value)
+
     for (vertex_descriptor v : vertices(polygon)) {
         Point vertex_point = get(CGAL::vertex_point, polygon, v);
         
-        // If the vertex is near the XY plane (i.e., its Z-coordinate is close to 0)
+        // If the vertex is near the XY plane its Z-coordinate is close to 0
         if (std::fabs(vertex_point.z()) < z_threshold) {
             xy_midline_points.push_back(vertex_point);
         }
     }
     
-    // std::cerr << "Number of points on XY midline: " << xy_midline_points.size() << "\n";   
-    // //print coordinates
-    // for(const auto& point : xy_midline_points) {
-    //     std::cout << "spaceLocator -p " << point << ";\n";
-    // }
-
     // Step 2: Cut the mesh along the XZ plane
     std::vector<Point> xz_midline_points;
-    //double y_threshold = 1e-3; // Threshold for splitting along XZ plane (based on Y value)
+
     for (vertex_descriptor v : vertices(polygon)) {
         Point vertex_point = get(CGAL::vertex_point, polygon, v);
         
-        // If the vertex is near the XZ plane (i.e., its Y-coordinate is close to 0)
+        // If the vertex is near the XZ plane its Y-coordinate is close to 0
         if (std::fabs(vertex_point.y()) < y_threshold) {
             xz_midline_points.push_back(vertex_point);
         }
     }
-    
-    // std::cerr << "Number of points on XZ midline: " << xz_midline_points.size() << "\n";
-    // //print coordinates
-    // for(const auto& point : xz_midline_points) {
-    //       std::cout << "spaceLocator -p " << point << ";" << "\n";
-    //  }
 
-    
-    //step 3: based on the four big intersections, we can make imaginary quads and divide those into triangles
+
+    //step 3: divide quads into triangles
     std::vector<Point> intersection_points;
     for(const auto& point: xy_midline_points)
     {
@@ -90,7 +78,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     // Step 3: Split XY midline
     std::vector<Point> top_xy_points;
     for (const auto &point : xy_midline_points) {
-        // Only keep points between the two intersections
+
         if (point.y() >= intersection1.y())
             {
             top_xy_points.push_back(point);
@@ -99,7 +87,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
     std::vector<Point> bottom_xy_points;
     for (const auto &point : xy_midline_points) {
-        // Only keep points between the two intersections
+
         if (point.y() <= intersection1.y())
             {
             bottom_xy_points.push_back(point);
@@ -109,7 +97,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     // Step 4: split XZ midline using the intersection points and put back the points into a new vector
     std::vector<Point> right_xz_points;
     for (const auto &point : xz_midline_points) {
-        // Only keep points between the two intersections
+
         if (point.z() >= intersection1.z())
             {
             right_xz_points.push_back(point);
@@ -118,7 +106,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
     std::vector<Point> left_xz_points;
     for( const auto &point : xz_midline_points) {
-        // Only keep points between the two intersections
+
         if (point.z() <= intersection1.z())
             {
             left_xz_points.push_back(point);
@@ -144,13 +132,32 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
     triangles["triangle8"] = {midpoint_left_xz, midpoint_bottom_xy, intersection2};
 
-    // //print coordinates of the triangles
-    // for(const auto& triangle : triangles) {
-    //     std::cout << "Triangle: " << triangle.first << "\n";
-    //     for(const auto& point : triangle.second) {
-    //         std::cout << "spaceLocator -p " << point << ";\n";
-    //     }
-    // }
+    //make sure the triangles have the right normal
+    //do it for triangle 0,2,5,7
+
+    //print
+    for(const auto& triangle : triangles)
+    {
+        std::cout << "//Triangle: " << triangle.first << "\n";
+        for(const auto& point : triangle.second)
+        {
+            std::cout << "spaceLocator -p " << point << ";\n";
+        }
+    }
+
+
+    for(auto& triangle : triangles)
+    {
+        if(triangle.first == "triangle1" || triangle.first == "triangle3" || triangle.first == "triangle6" || triangle.first == "triangle8")
+        {
+        Point A = triangle.second[0];
+        Point B = triangle.second[1];
+        Point C = triangle.second[2];
+
+        std::swap(triangle.second[0], triangle.second[1]);
+        }
+    }
+
 
     //turn points into faces    
     for(const auto& triangle : triangles) 
@@ -172,13 +179,7 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
     Mesh mesh; 
     mesh.triangulateMesh(polygon);
 
-    //print all vertices
-    for(vertex_descriptor v : vertices(polygon))
-    {
-        Point vertex_point = get(CGAL::vertex_point, polygon, v);
-        //std::cout << "spaceLocator -p " << vertex_point << ";\n";
-        std::cout << "Vertex: " << v << " Point: " << vertex_point << "\n";
-    }
+    // Create an AABB tree for the octahedron
     AABB_Tree tree(faces(octahedron).first, faces(octahedron).second, octahedron);
 
     std::set<vertex_descriptor> processed_vertices;
@@ -229,23 +230,27 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
         double v_bary = area_PCA / area_ABC;
         double w_bary = area_PAB / area_ABC;
 
+        std::cout << "Vertex: " << v << " Closest Face Descriptor: " << closest_face_descriptor << "\n";
+        //convert the closest face descriptor to a string
         // Check if the barycentric coordinates are valid (non-negative and sum to 1)
         if (u_bary >= 0 && v_bary >= 0 && w_bary >= 0 && std::abs(u_bary + v_bary + w_bary - 1) < 1e-6)
         {
+            std::string closest_face_descriptor_str = std::to_string(closest_face_descriptor);
             bary_coords = {u_bary, v_bary, w_bary};
-            barycentric_coordinates["triangle1"].emplace_back(v, bary_coords, distance_to_plane);
+            barycentric_coordinates[closest_face_descriptor_str].emplace_back(v, bary_coords, distance_to_plane);
             processed_vertices.insert(v);  // Mark the vertex as processed
         }
+        
     }
 
     // Print barycentric coordinates
-    for (const auto &[triangle_id, coords] : barycentric_coordinates) {
-        std::cout << "Triangle: " << triangle_id << "\n";
-        for (const auto &[vertex_id, bary_coords, distance] : coords) {
-            std::cout << "Vertex: " << vertex_id << 
-            "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2] << "), Distance: " << distance << "\n";
-        }
-    }
+    // for (const auto &[triangle_id, coords] : barycentric_coordinates) {
+    //     std::cout << "Face: " << triangle_id << "\n";
+    //     for (const auto &[vertex_id, bary_coords, distance] : coords) {
+    //         std::cout << "Vertex: " << vertex_id << 
+    //         "  Barycentric: (" << bary_coords[0] << ", " << bary_coords[1] << ", " << bary_coords[2] << "), Distance: " << distance << "\n";
+    //     }
+    // }
 
     std::cout << "Barycentric coordinates computed successfully\n";
 }
@@ -253,41 +258,41 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
 
 
 
-void meshUtility::projectTrianglePoints(std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget , std::map<std::string, std::array<Point, 3>> &projected_points)
-{
-    if(trianglesSource.size() != trianglesTarget.size())
-    {
-        std::cerr << "Invalid input at projectTrianglePoints, not same amount of triangles\n";
-        return;
-    }
+// void meshUtility::projectTrianglePoints([std::map<std::string, std::array<Point, 3>> trianglesSource, std::map<std::string, std::array<Point, 3>> trianglesTarget] , std::map<std::string, std::array<Point, 3>> &projected_points)
+// {
+//     if(trianglesSource.size() != trianglesTarget.size())
+//     {
+//         std::cerr << "Invalid input at projectTrianglePoints, not same amount of triangles\n";
+//         return;
+//     }
 
-    for(const auto &[key, sourceTriangle] : trianglesSource)
-    {
-        auto targetTriangleIt = trianglesTarget.find(key);
+//     for(const auto &[key, sourceTriangle] : trianglesSource)
+//     {
+//         auto targetTriangleIt = trianglesTarget.find(key);
         
-        if(targetTriangleIt == trianglesTarget.end())
-        {
-            std::cerr << "Invalid input at projectTrianglePoints, triangle not found\n";
-            return;
-        }
+//         if(targetTriangleIt == trianglesTarget.end())
+//         {
+//             std::cerr << "Invalid input at projectTrianglePoints, triangle not found\n";
+//             return;
+//         }
 
     
-    const auto &targetTriangle = targetTriangleIt->second;
-    std::array<Point, 3> projectedTriangle;
+//     const auto &targetTriangle = targetTriangleIt->second;
+//     std::array<Point, 3> projectedTriangle;
     
-    for(size_t j = 0; j < 3; j++)
-    {
-        CGAL::Vector_3<Kernel> displacement = targetTriangle[j] - sourceTriangle[j];
-        projectedTriangle[j] = Point(sourceTriangle[j].x() + displacement.x(), 
-                            sourceTriangle[j].y() + displacement.y(), 
-                            sourceTriangle[j].z() + displacement.z());
+//     for(size_t j = 0; j < 3; j++)
+//     {
+//         CGAL::Vector_3<Kernel> displacement = targetTriangle[j] - sourceTriangle[j];
+//         projectedTriangle[j] = Point(sourceTriangle[j].x() + displacement.x(), 
+//                             sourceTriangle[j].y() + displacement.y(), 
+//                             sourceTriangle[j].z() + displacement.z());
     
-    }
+//     }
     
-    projected_points[key] = projectedTriangle;
-}
-    std::cout << "Triangle points: " << projected_points.size() << " projected successfully\n";
-}
+//     projected_points[key] = projectedTriangle;
+// }
+//     std::cout << "Triangle points: " << projected_points.size() << " projected successfully\n";
+// }
 
 
 Point operator*(double scalar, const Point& point)
@@ -302,49 +307,76 @@ Point operator+(const Point& p1, const Point& p2)
 
 
 
-std::map<int, std::vector<Point>> meshUtility::initialWrapping(std::map<std::string, std::array<Point, 3>> trianglesSource,std::map<std::string, std::array<Point, 3>> trianglesTarget, std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource)
+std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh ,std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource)
 {
-    if (trianglesSource.size() != trianglesTarget.size())
+
+    std::map<int, std::vector<Point>> WrappedPoints;
+
+    for(const auto &[face_id, bary_coords]: barycentric_coordinatesSource)
     {
-        std::cerr << "Invalid input at initialWrapping, not same amount of triangles\n";
-        return {};
-    }
+        Polygon_mesh::Face_index target_face = Polygon_mesh::Face_index(std::stoi(face_id));
+        auto halfedge_descriptor = halfedge(target_face, octahedronTarget);
+        auto vertices_around = vertices_around_face(halfedge_descriptor, octahedronTarget);
 
-    //need wrapped points to also contain the vertex id
-    std::map<int, std::vector<Point>>  WrappedPoints;
+        //get points target triangle
+        auto vertex_iter = vertices_around.begin();
+        Point A = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
+        vertex_iter++;
+        Point B = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
+        vertex_iter++;
+        Point C = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
 
-    for (const auto &[key, sourceTriangle] : trianglesSource)
-    {
-        auto targetTriangleIt = trianglesTarget.find(key);
+        //calculating the normal of the target triangle
+        Vector_3 normal = CGAL::cross_product(B - A, C - A);
+        normal = normal / CGAL::sqrt(normal.squared_length());
 
-        if (targetTriangleIt == trianglesTarget.end())
+
+        //process each vertex in the source
+        for(const auto &[vertex_id, bary_coords, distance]: bary_coords)
         {
-            std::cerr << "Invalid input at initialWrapping, triangle not found\n";
-            continue;
-        }
+            double u = bary_coords[0];
+            double v = bary_coords[1];
+            double w = bary_coords[2];
 
-        const auto &targetTriangle = targetTriangleIt->second;
+            Point wrapped_point = u * A + v * B + w * C;
+            wrapped_point = wrapped_point + distance * normal;
 
-        // auto edge1 = targetTriangle[1] - targetTriangle[0];
-        // auto edge2 = targetTriangle[2] - targetTriangle[0];
-        // auto normal = CGAL::cross_product(edge1, edge2);
-        // normal = normal / CGAL::sqrt(normal.squared_length());
-
-        for (const auto &[vertex_id, baryCoords, distance] : barycentric_coordinatesSource[key])
-        {
-            Point wrappedPoint =
-                baryCoords[0] * targetTriangle[0] +
-                baryCoords[1] * targetTriangle[1] +
-                baryCoords[2] * targetTriangle[2];
-
-
-            //add the vertex id to the point
-            WrappedPoints[vertex_id].push_back(wrappedPoint);
+            WrappedPoints[vertex_id].push_back(wrapped_point);
         }
     }
 
-    //print the wrapped points
+    //print wrapped points
+    for(const auto &[vertexId, point] : WrappedPoints)
+    {
+        for(const auto &point : point)
+        {
+            std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
+        }
+    }
 
     std::cout << "Initial wrapping completed successfully\n";
+    
+
+    //insert the vertices that are not wrapped from the source mesh //THIS IS FOR DEBUGGING < REMOVE LATER
+    for(
+        vertex_descriptor v : vertices(sourceMesh))
+    {
+        if(WrappedPoints.find(v) == WrappedPoints.end())
+        {
+            Point vertex_point = get(CGAL::vertex_point, sourceMesh, v);
+            WrappedPoints[v].push_back(vertex_point);
+        }
+    }
+    
+    //print wrapped points
+    for(const auto &[vertexId, point] : WrappedPoints)
+    {
+        for(const auto &point : point)
+        {
+            std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
+        
+        }
+    }
+
     return WrappedPoints;
 }
