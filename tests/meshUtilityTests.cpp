@@ -100,30 +100,3 @@ TEST(MeshUtility, ComputeBarycentricCoordinates)
     EXPECT_NEAR(distance_2, 0.0, 1e-6); 
 }
 
-
-// TEST(MeshUtility, projectPoints)
-// {
-//     Mesh mesh;
-
-//     Polygon_mesh polygonSource;
-//     Polygon_mesh polygonTarget;
-//     std::string filenameSource = "files/normal_sphere_export.obj";
-//     std::string filenameTarget = "files/deformed_sphere_line.obj";
-
-//     mesh.loadMesh(filenameSource, polygonSource);
-//     mesh.loadMesh(filenameTarget, polygonTarget);
-
-//     std::map<std::string, std::array<Point, 3>> trianglesSource;
-//     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-
-//     meshUtility meshUtil;
-//     trianglesSource = meshUtil.divideMeshForBarycentricComputing(polygonSource, 1e-3, 1e-3);
-//     trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, 0.1, 0.1);
-
-//     std::map<std::string, std::array<Point, 3>> projected_points;
-
-//     meshUtil.projectTrianglePoints(trianglesSource, trianglesTarget, projected_points);
-//     EXPECT_EQ(projected_points.size(), 8);
-
-// }
-
