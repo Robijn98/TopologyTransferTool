@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     Mesh mesh;
     Polygon_mesh polygonSource;
     Polygon_mesh polygonTarget;
-    std::string filenameSource = "files/deformed_sphere_export.obj";
+    std::string filenameSource = "files/normal_sphere_export.obj";
     std::string filenameTarget = "files/deformed_sphere_export.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
@@ -23,22 +23,6 @@ int main(int argc, char **argv)
     mesh.validateMesh(polygonTarget);
     mesh.triangulateMesh(polygonTarget);
 
-    // //curves
-    // Curve curve;
-    // std::vector<Point> curveSource;
-    // std::vector<Point> curveTarget;
-    // std::vector<Point> discretizedCurveSource;
-    // std::vector<Point> discretizedCurveTarget;
-    // std::vector<Point> projectedCurve;
-
-    // curve.loadCurve("files/deformed_sphere_export.obj", curveSource);
-    // curve.loadCurve("files/deformed_sphere_export.obj", curveTarget);
-
-    // int numPoints = 10; 
-    // discretizedCurveSource = curve.discretizeCurve(curveSource, discretizedCurveSource, numPoints);
-    // discretizedCurveTarget = curve.discretizeCurve(curveTarget, discretizedCurveTarget, numPoints);
-
-    // projectedCurve = curve.projectPoints(discretizedCurveSource, discretizedCurveTarget, projectedCurve);
 
     //mesh utility
     meshUtility meshUtil;
@@ -47,7 +31,7 @@ int main(int argc, char **argv)
     Polygon_mesh debugMesh;
     Polygon_mesh debugMesh2;
 
-    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh, 0.5, 0.5);
+    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh,  1e-6, 1e-6);
 
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
@@ -63,7 +47,7 @@ int main(int argc, char **argv)
     //output
     Output output;
     output.writeMesh("files/output.obj", polygonSource);
-    output.updateFileWithWrap("files/output.obj", WrappedPoints);
+    //output.updateFileWithWrap("files/output.obj", WrappedPoints);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))

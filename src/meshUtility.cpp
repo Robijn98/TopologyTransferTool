@@ -15,6 +15,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>  
+#include <CGAL/Polygon_mesh_processing/remesh.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
@@ -56,6 +57,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     }
 
 
+
     //step 3: divide quads into triangles
     std::vector<Point> intersection_points;
     for(const auto& point: xy_midline_points)
@@ -71,9 +73,13 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         }
     }
     
+
+
     //split up the lines xymidline using the intersection points and put back the points into a new vector
     Point intersection1 = intersection_points[0];
     Point intersection2 = intersection_points[1];
+
+
 
     // Step 3: Split XY midline
     std::vector<Point> top_xy_points;
@@ -84,6 +90,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
             top_xy_points.push_back(point);
             }
     }
+
 
     std::vector<Point> bottom_xy_points;
     for (const auto &point : xy_midline_points) {
@@ -116,10 +123,25 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
     //Step 5: create the actual triangles from the points
     
+    std::sort(right_xz_points.begin(), right_xz_points.end(), 
+    [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_right_xz = right_xz_points[right_xz_points.size() / 2];
+
+    
+    std::sort(bottom_xy_points.begin(), bottom_xy_points.end(), 
+    [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_bottom_xy = bottom_xy_points[bottom_xy_points.size() / 2];
+    
+    
+    std::sort(left_xz_points.begin(), left_xz_points.end(), 
+    [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_left_xz = left_xz_points[left_xz_points.size() / 2];
+    
+    
+    std::sort(top_xy_points.begin(), top_xy_points.end(), 
+    [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_top_xy = top_xy_points[top_xy_points.size() / 2];
+
 
     //create dictionary for triangles to be used for barycentric coordinates
     std::map<std::string, std::array<Point, 3>> triangles; 
@@ -250,7 +272,6 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
             }
             else
             {
-                std::cout << "Vertex:" << v << "has coordinates: "<< "u: " << u_bary << " v: " << v_bary << " w: " << w_bary << "\n";
                 
                 // Perturb the point slightly
                 Vector_3 edge1 = B - A;
@@ -348,30 +369,20 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
     }
 
 
-
     std::cout << "Initial wrapping completed successfully\n";
     
 
-    // //insert the vertices that are not wrapped from the source mesh //THIS IS FOR DEBUGGING < REMOVE LATER
-    // for(
-    //     vertex_descriptor v : vertices(sourceMesh))
-    // {
-    //     if(WrappedPoints.find(v) == WrappedPoints.end())
-    //     {
-    //         Point vertex_point = get(CGAL::vertex_point, sourceMesh, v);
-    //         WrappedPoints[v].push_back(vertex_point);
-    //     }
-    // }
-    
-    // //print wrapped points
-    // for(const auto &[vertexId, point] : WrappedPoints)
-    // {
-    //     for(const auto &point : point)
-    //     {
-    //         std::cout<< "Vertex ID: " << vertexId << " Point: " << point << "\n";
-        
-    //     }
-    // }
-
     return WrappedPoints;
 }
+
+// void meshUtility::relaxMesh(Polygon_mesh &polygon)
+// {
+//     CGAL::Surface_mesh_smoothing<Polygon_mesh> smoother(polygon);
+
+//     smoother.use_explicit_smoothing();
+//     smoother.use_implicit_smoothing();
+
+//     smoother.smooth();
+
+//     std::cout << "Mesh relaxed successfully\n";
+// }
