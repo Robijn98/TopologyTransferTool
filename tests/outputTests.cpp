@@ -13,36 +13,36 @@ TEST(Output, writeMesh)
 }
 
 
-// TEST(Output, updateFileWithWrap)
-// {
-//     Mesh mesh;
-//     Output output;
-//     std::map<std::string, std::vector<std::tuple<int, Point>>> WrappedPoints;
-//     //WrappedPoints["point1"] = {1,Point(1, 2, 3)};
+TEST(Output, updateFileWithWrap)
+{
+    Mesh mesh;
+    Output output;
+    std::map<int, std::vector<Point>>  WrappedPoints;
+    WrappedPoints[1].push_back(Point(1, 2, 3));
 
-//     output.updateFileWithWrap("files/output.obj", WrappedPoints);
-//     //read the file and check if the point is there
-//     std::string line;
-//     std::ifstream file("files/output.obj");
-//     bool found = false;
-//     while (std::getline(file, line))
-//     {
-//         if (line.find("v 1 2 3") != std::string::npos)
-//         {
-//             found = true;
-//             break;
-//         }
-//     }
-//     EXPECT_TRUE(found == true);
+    output.updateFileWithWrap("files/output.obj", WrappedPoints);
+    //read the file and check if the point is there
+    std::string line;
+    std::ifstream file("files/output.obj");
+    bool found = false;
+    while (std::getline(file, line))
+    {
+        if (line.find("v 1 2 3") != std::string::npos)
+        {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found == true);
     
-//     found = false;
-//     while (std::getline(file, line))
-//     {
-//         if (line.find("v 1 5 3") != std::string::npos)
-//         {
-//             found = true;
-//             break;
-//         }
-//     }
-//     EXPECT_TRUE(found == false);
-// }
+    found = false;
+    while (std::getline(file, line))
+    {
+        if (line.find("v 1 5 3") != std::string::npos)
+        {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found == false);
+}

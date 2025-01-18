@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     //output
     Output output;
     output.writeMesh("files/output.obj", polygonSource);
-    //output.updateFileWithWrap("files/output.obj", WrappedPoints);
+    output.updateFileWithWrap("files/output.obj", WrappedPoints);
     
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
