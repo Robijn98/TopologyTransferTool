@@ -43,7 +43,8 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
             xy_midline_points.push_back(vertex_point);
         }
     }
-    
+
+
     // Step 2: Cut the mesh along the XZ plane
     std::vector<Point> xz_midline_points;
 
@@ -56,29 +57,47 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         }
     }
 
-
-
     //step 3: divide quads into triangles
     std::vector<Point> intersection_points;
-    for(const auto& point: xy_midline_points)
-    {
-        //find the intersections with the xz midline
-        for(const auto& point2: xz_midline_points)
-        {
-            if(point2.x() == point.x() && point2.y() == point.y() && point2.z() == point.z())
-            {
-               intersection_points.push_back(point);
+    double threshold = 1e-6;
+    int max_threshold = 1;
 
+    while(intersection_points.size() != 2 && threshold < max_threshold)
+    {
+
+        for(const auto& point: xy_midline_points)
+        {
+            //find the intersections with the xz midline within a small theshold
+            for(const auto& point2: xz_midline_points)
+            {
+                if(std::fabs(point.z() - point2.z()) < threshold 
+                && std::fabs(point.y() - point2.y()) < threshold
+                && std::fabs(point.x() - point2.x()) < threshold)
+                {
+                intersection_points.push_back(point);
+
+                }
             }
         }
+    threshold = threshold * 10;
     }
     
 
-
     //split up the lines xymidline using the intersection points and put back the points into a new vector
+    
+    // Sort intersection points to ensure consistent ordering
+    std::sort(intersection_points.begin(), intersection_points.end(), 
+        [](const Point& a, const Point& b) {
+            if (a.x() != b.x()) return a.x() < b.x();
+            if (a.y() != b.y()) return a.y() < b.y();
+            return a.z() < b.z();
+        });
+    
+    
+    
+    
     Point intersection1 = intersection_points[0];
     Point intersection2 = intersection_points[1];
-
 
 
     // Step 3: Split XY midline
@@ -101,6 +120,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
             }
     }
 
+
     // Step 4: split XZ midline using the intersection points and put back the points into a new vector
     std::vector<Point> right_xz_points;
     for (const auto &point : xz_midline_points) {
@@ -110,6 +130,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
             right_xz_points.push_back(point);
             }
     }
+
 
     std::vector<Point> left_xz_points;
     for( const auto &point : xz_midline_points) {
@@ -142,32 +163,38 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_top_xy = top_xy_points[top_xy_points.size() / 2];
 
+    std::cout << "//midPoint_right_xz: " << "\n";
+    std::cout << "spaceLocator -p " << midpoint_right_xz.x() << " " << midpoint_right_xz.y() << " " << midpoint_right_xz.z() << ";\n";
+
+    std::cout << "//midPoint_bottom_xy: " << "\n";
+    std::cout << "spaceLocator -p " << midpoint_bottom_xy.x() << " " << midpoint_bottom_xy.y() << " " << midpoint_bottom_xy.z() << ";\n";
+
+    std::cout << "//midPoint_left_xz: " << "\n";
+    std::cout << "spaceLocator -p " << midpoint_left_xz.x() << " " << midpoint_left_xz.y() << " " << midpoint_left_xz.z() << ";\n";
+
+    std::cout << "//midPoint_top_xy: " << "\n";
+    std::cout << "spaceLocator -p " << midpoint_top_xy.x() << " " << midpoint_top_xy.y() << " " << midpoint_top_xy.z() << ";\n";
+
+
 
     //create dictionary for triangles to be used for barycentric coordinates
     std::map<std::string, std::array<Point, 3>> triangles; 
-    triangles["triangle1"] = {midpoint_right_xz, midpoint_bottom_xy, intersection1};
+    triangles["triangle1"] = {midpoint_bottom_xy, midpoint_right_xz, intersection1};
     triangles["triangle2"] = {midpoint_right_xz, midpoint_bottom_xy, intersection2};
-    triangles["triangle3"] = {midpoint_left_xz, midpoint_top_xy, intersection1};
+    triangles["triangle3"] = {midpoint_top_xy, midpoint_left_xz, intersection1};
     triangles["triangle4"] = {midpoint_left_xz, midpoint_top_xy, intersection2};
     triangles["triangle5"] = {midpoint_right_xz, midpoint_top_xy, intersection1};
-    triangles["triangle6"] = {midpoint_right_xz, midpoint_top_xy, intersection2};
+    triangles["triangle6"] = {midpoint_top_xy, midpoint_right_xz, intersection2};
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
-    triangles["triangle8"] = {midpoint_left_xz, midpoint_bottom_xy, intersection2};
+    triangles["triangle8"] = {midpoint_bottom_xy, midpoint_left_xz, intersection2};
 
-
-    //fix the orientation of the triangles
-    for(auto& triangle : triangles)
+    for(const auto& triangle : triangles) 
     {
-        if(triangle.first == "triangle1" || triangle.first == "triangle3" || triangle.first == "triangle6" || triangle.first == "triangle8")
-        {
-        Point A = triangle.second[0];
-        Point B = triangle.second[1];
-        Point C = triangle.second[2];
-
-        std::swap(triangle.second[0], triangle.second[1]);
-        }
+        std::cout<< "//Triangle: " << triangle.first << "\n";
+        std::cout<< "spaceLocator -p " << triangle.second[0] << ";\n";
+        std::cout << "spaceLocator -p " << triangle.second[1] << ";\n";
+        std::cout << "spaceLocator -p " << triangle.second[2] << ";\n";
     }
-
 
     //turn points into faces    
     for(const auto& triangle : triangles) 
@@ -177,6 +204,14 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         vertex_descriptor v2 = add_vertex(triangle.second[2], debugMesh);
         debugMesh.add_face(v0, v1, v2);
     }
+
+    //print all faces
+    for(Polygon_mesh::Face_index f : faces(debugMesh))
+    {
+        std::cout << "Face: " << f << "\n";
+
+    }
+
 
     //scale up the cage to be bigger than the original mesh
     for(vertex_descriptor v : vertices(debugMesh))
