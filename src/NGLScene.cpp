@@ -1,27 +1,28 @@
+#include "NGLScene.h"
+#include "mesh.h"
 #include <QMouseEvent>
 #include <QGuiApplication>
 #include <QFont>
 #include <QFileDialog>
-
-#include "NGLScene.h"
+#include <array>
 #include <ngl/Transformation.h>
 #include <ngl/NGLInit.h>
 #include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
 #include <iostream>
+#include <ngl/VAOFactory.h>
+#include <ngl/SimpleIndexVAO.h>
 
-NGLScene::NGLScene(const std::string &_oname)
+
+NGLScene::NGLScene()
 {
-  setTitle("viewer");
-  m_showBBox = false;
-  m_showBSphere = true;
-  m_objFileName = _oname;
-  //m_textureFileName = _tname;
+  setTitle("Qt5 SimpleIndexVAO created from VAOFactory NGL Demo");
 }
 
 NGLScene::~NGLScene()
 {
   std::cout << "Shutting down NGL, removing VAO's and Shaders\n";
+  m_vao->removeVAO();
 }
 
 void NGLScene::resizeGL(int _w, int _h)
@@ -33,76 +34,123 @@ void NGLScene::resizeGL(int _w, int _h)
 
 void NGLScene::initializeGL()
 {
-  // we must call this first before any other GL commands to load and link the
-  // gl commands from the lib, if this is not done program will crash
   ngl::NGLInit::initialize();
 
   glClearColor(0.4f, 0.4f, 0.4f, 1.0f); // Grey Background
   // enable depth testing for drawing
-  glEnable(GL_DEPTH_TEST);
-  // enable multisampling for smoother drawing
-  glEnable(GL_MULTISAMPLE);
 
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_MULTISAMPLE);
   // Now we will create a basic Camera from the graphics library
   // This is a static camera so it only needs to be set once
   // First create Values for the camera position
-  ngl::Vec3 from(0, 4, 8);
+  ngl::Vec3 from(0, 1, 2);
   ngl::Vec3 to(0, 0, 0);
   ngl::Vec3 up(0, 1, 0);
+
   m_view = ngl::lookAt(from, to, up);
   // set the shape using FOV 45 Aspect Ratio based on Width and Height
   // The final two are near and far clipping planes of 0.5 and 10
-  m_project = ngl::perspective(45.0f, 720.0f / 576.0f, 0.05f, 350.0f);
+  m_project = ngl::perspective(45, 720.0f / 576.0f, 0.001f, 150.0f);
 
-  ngl::ShaderLib::createShaderProgram("TextureShader");
+  constexpr auto ColourShader = "ColourShader";
+  constexpr auto ColourVertex = "ColourVertex";
+  constexpr auto ColourFragment = "ColourFragment";
+  ngl::ShaderLib::createShaderProgram(ColourShader);
 
-  ngl::ShaderLib::attachShader("TextureVertex", ngl::ShaderType::VERTEX);
-  ngl::ShaderLib::attachShader("TextureFragment", ngl::ShaderType::FRAGMENT);
-  ngl::ShaderLib::loadShaderSource("TextureVertex", "../shaders/TextureVertex.glsl");
-  ngl::ShaderLib::loadShaderSource("TextureFragment", "../shaders/TextureFragment.glsl");
+  ngl::ShaderLib::attachShader(ColourVertex, ngl::ShaderType::VERTEX);
+  ngl::ShaderLib::attachShader(ColourFragment, ngl::ShaderType::FRAGMENT);
+  ngl::ShaderLib::loadShaderSource(ColourVertex, "shaders/ColourVertex.glsl");
+  ngl::ShaderLib::loadShaderSource(ColourFragment, "shaders/ColourFragment.glsl");
 
-  ngl::ShaderLib::compileShader("TextureVertex");
-  ngl::ShaderLib::compileShader("TextureFragment");
-  ngl::ShaderLib::attachShaderToProgram("TextureShader", "TextureVertex");
-  ngl::ShaderLib::attachShaderToProgram("TextureShader", "TextureFragment");
+  ngl::ShaderLib::compileShader(ColourVertex);
+  ngl::ShaderLib::compileShader(ColourFragment);
+  ngl::ShaderLib::attachShaderToProgram(ColourShader, ColourVertex);
+  ngl::ShaderLib::attachShaderToProgram(ColourShader, ColourFragment);
 
-  // link the shader no attributes are bound
-  ngl::ShaderLib::linkProgramObject("TextureShader");
-  ngl::ShaderLib::use("TextureShader");
+  ngl::ShaderLib::linkProgramObject(ColourShader);
+  ngl::ShaderLib::use(ColourShader);
 
-  ngl::ShaderLib::use(ngl::nglColourShader);
-  ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
-
-  // create a mesh from an obj passing in the obj file
-  m_mesh.reset(new ngl::Obj(m_objFileName));
-  //creating as VAO to draw
-  m_mesh->createVAO();
-  m_mesh->calcBoundingSphere();
-  ngl::VAOPrimitives::createSphere("sphere", 1.0, 20);
-
-  glViewport(0, 0, width(), height());
-  m_text.reset(new ngl::Text("../fonts/Arial.ttf", 16));
-  m_text->setScreenSize(width(), height());
-  m_text->setColour(1, 1, 1);
+  buildVAO();
+  ngl::VAOFactory::listCreators();
 }
 
-void NGLScene::loadMatricesToShader()
+void NGLScene::buildVAO()
 {
+  Mesh mesh;
+  Polygon_mesh polygonSource;
+  mesh.loadMesh("files/output.obj", polygonSource);
+  std::vector<std::array<float, 3>> vertexColors = mesh.getVertexColors("vertex_colors.txt");
+  std::vector<ngl::Vec3> interleavedData = mesh.interleavePosAndColor(polygonSource, vertexColors);
 
-  ngl::Mat4 MVP = m_project * m_view *
-                  m_mouseGlobalTX *
-                  m_transform.getMatrix();
+  // for(auto &i : interleavedData)
+  //   {
+  //     std::cout << "Interleaved Data: " << i.m_x << " " << i.m_y << " " << i.m_z << "\n";
+  //   }
+    
+  // Generate indices from faces
+  std::vector<GLshort> indices;
+  for (Polygon_mesh::face_index f : faces(polygonSource))
+  {
+    for (vertex_descriptor v : vertices_around_face(polygonSource.halfedge(f), polygonSource))
+    {
+      indices.push_back(v + 1);
+    }
+  }
 
-  ngl::ShaderLib::setUniform("MVP", MVP);
+  // // Debug output for indices
+  // std::cout << "Generated Indices: ";
+  // for (size_t i = 0; i < indices.size(); ++i)
+  // {
+  //   std::cout << indices[i] << " ";
+  // }
+  // std::cout << "\n";
+
+
+  // Create and bind VAO
+  m_vao = ngl::VAOFactory::createVAO(ngl::simpleIndexVAO, GL_TRIANGLES);
+  m_vao->bind();
+
+
+ m_vao->setData(ngl::SimpleIndexVAO::VertexData(
+      interleavedData.size()*12,
+      interleavedData[0].m_x,
+      indices.size()*2, &indices[0],
+      GL_UNSIGNED_SHORT));
+
+
+    std::cout << "sizeof vertAndColour " << interleavedData.size() << '\n';
+    std::cout << "vertAndColour[0].m_x " << interleavedData[0].m_x << '\n';
+    std::cout << "sizeof indices " << indices.size() << '\n';
+    std::cout << "indices[0] " << &indices[0] << '\n';
+
+
+
+  // Set vertex attribute pointers
+  m_vao->setVertexAttributePointer(0, 3, GL_FLOAT, sizeof(interleavedData), 0); 
+  m_vao->setVertexAttributePointer(1, 3, GL_FLOAT, sizeof(interleavedData), 3); 
+
+  // Specify the number of indices
+  m_vao->setNumIndices(indices.size());
+
+  // Unbind VAO
+  m_vao->unbind();
+
+          
 }
+
+
+
 
 void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0, 0, m_win.width, m_win.height);
+  // Rotation based on the mouse position for our global transform
   auto rotX = ngl::Mat4::rotateX(m_win.spinXFace);
   auto rotY = ngl::Mat4::rotateY(m_win.spinYFace);
+
   // multiply the rotations
   m_mouseGlobalTX = rotY * rotX;
   // add the translations
@@ -110,35 +158,103 @@ void NGLScene::paintGL()
   m_mouseGlobalTX.m_m[3][1] = m_modelPos.m_y;
   m_mouseGlobalTX.m_m[3][2] = m_modelPos.m_z;
 
-  ngl::ShaderLib::use("TextureShader");
-  m_transform.reset();
-  loadMatricesToShader();
-  // draw the mesh
-  m_mesh->draw();
-  // m_bin->draw();
-  //  draw the mesh bounding box
-  ngl::ShaderLib::use("nglColourShader");
+  ngl::Mat4 MVP = m_project * m_view * m_mouseGlobalTX;
+  ngl::ShaderLib::setUniform("MVP", MVP);
 
-  if (m_showBBox == true)
-  {
-    loadMatricesToShader();
-    ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
-    m_mesh->drawBBox();
-  }
-  if (m_showBSphere == true)
-  {
-    ngl::ShaderLib::setUniform("Colour", 1.0f, 1.0f, 1.0f, 1.0f);
-    m_transform.reset();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    
-    m_transform.setPosition(m_mesh->getSphereCenter());
-    m_transform.setScale(m_mesh->getSphereRadius(), m_mesh->getSphereRadius(), m_mesh->getSphereRadius());
-    loadMatricesToShader();
-    ngl::VAOPrimitives::draw("sphere");
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
+  m_vao->bind();
+  m_vao->draw();
+  m_vao->unbind();
+}
 
-  m_text->renderText(10, 18, "viewer");
+//----------------------------------------------------------------------------------------------------------------------
+void NGLScene::mouseMoveEvent(QMouseEvent *_event)
+{
+// note the method buttons() is the button state when event was called
+// that is different from button() which is used to check which button was
+// pressed when the mousePress/Release event is generated
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+  auto position = _event->position();
+#else
+  auto position = _event->pos();
+#endif
+  if (m_win.rotate && _event->buttons() == Qt::LeftButton)
+  {
+    int diffx = position.x() - m_win.origX;
+    int diffy = position.y() - m_win.origY;
+    m_win.spinXFace += static_cast<int>(0.5f * diffy);
+    m_win.spinYFace += static_cast<int>(0.5f * diffx);
+    m_win.origX = position.x();
+    m_win.origY = position.y();
+    update();
+  }
+  // right mouse translate code
+  else if (m_win.translate && _event->buttons() == Qt::RightButton)
+  {
+    int diffX = static_cast<int>(position.x() - m_win.origXPos);
+    int diffY = static_cast<int>(position.y() - m_win.origYPos);
+    m_win.origXPos = position.x();
+    m_win.origYPos = position.y();
+    m_modelPos.m_x += INCREMENT * diffX;
+    m_modelPos.m_y -= INCREMENT * diffY;
+    update();
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+void NGLScene::mousePressEvent(QMouseEvent *_event)
+{
+// that method is called when the mouse button is pressed in this case we
+// store the value where the maouse was clicked (x,y) and set the Rotate flag to true
+#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
+  auto position = _event->position();
+#else
+  auto position = _event->pos();
+#endif
+  if (_event->button() == Qt::LeftButton)
+  {
+    m_win.origX = position.x();
+    m_win.origY = position.y();
+    m_win.rotate = true;
+  }
+  // right mouse translate mode
+  else if (_event->button() == Qt::RightButton)
+  {
+    m_win.origXPos = position.x();
+    m_win.origYPos = position.y();
+    m_win.translate = true;
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+void NGLScene::mouseReleaseEvent(QMouseEvent *_event)
+{
+  // that event is called when the mouse button is released
+  // we then set Rotate to false
+  if (_event->button() == Qt::LeftButton)
+  {
+    m_win.rotate = false;
+  }
+  // right mouse translate mode
+  if (_event->button() == Qt::RightButton)
+  {
+    m_win.translate = false;
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+void NGLScene::wheelEvent(QWheelEvent *_event)
+{
+
+  // check the diff of the wheel position (0 means no change)
+  if (_event->angleDelta().x() > 0)
+  {
+    m_modelPos.m_z += ZOOM;
+  }
+  else if (_event->angleDelta().x() < 0)
+  {
+    m_modelPos.m_z -= ZOOM;
+  }
+  update();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -169,39 +285,10 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_N:
     showNormal();
     break;
-  case Qt::Key_B:
-    m_showBBox ^= true;
-    break;
-  case Qt::Key_P:
-    m_showBSphere ^= false;
-    break;
-  case Qt::Key_Space:
-    m_win.spinXFace = 0;
-    m_win.spinYFace = 0;
-    m_modelPos.set(ngl::Vec3::zero());
-    break;
-
-  case Qt::Key_O:
-  {
-    QString filename = QFileDialog::getOpenFileName(
-        nullptr,
-        tr("load Obj"),
-        QDir::currentPath(),
-        tr("*.obj"));
-
-    if (!filename.isNull())
-    {
-      m_mesh.reset(new ngl::Obj(filename.toStdString()));
-      // now we need to create this as a VAO so we can draw it
-      m_mesh->createVAO();
-      m_mesh->calcBoundingSphere();
-    }
-  }
-  break;
-
   default:
     break;
   }
   // finally update the GLWindow and re-draw
+  // if (isExposed())
   update();
 }

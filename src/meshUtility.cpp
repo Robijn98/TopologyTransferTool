@@ -410,14 +410,3 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
     return WrappedPoints;
 }
 
-// void meshUtility::relaxMesh(Polygon_mesh &polygon)
-// {
-//     CGAL::Surface_mesh_smoothing<Polygon_mesh> smoother(polygon);
-
-//     smoother.use_explicit_smoothing();
-//     smoother.use_implicit_smoothing();
-
-//     smoother.smooth();
-
-//     std::cout << "Mesh relaxed successfully\n";
-// }

@@ -50,6 +50,14 @@ int main(int argc, char **argv)
     output.writeMesh("files/output.obj", polygonSource);
     output.updateFileWithWrap("files/output.obj", WrappedPoints);
     
+
+    //colours
+    mesh.assignColors(polygonSource);
+    std::string vertexColorsFile = "vertex_colors.txt";
+    
+
+
+
     //viewer
     if(!CGAL::is_triangle_mesh(polygonSource))
     {
@@ -81,18 +89,9 @@ int main(int argc, char **argv)
     format.setProfile(QSurfaceFormat::CoreProfile);
     // now set the depth buffer to 24 bits
     format.setDepthBufferSize(24);
-    // now we are going to create our scene window
-    std::string oname("files/output.obj");
 
-    if(argc ==2)
-    {
-        oname=argv[1];
-    }
-    else if(argc == 3)
-    {
-        oname=argv[1];
-    }
-    NGLScene window(oname);
+    NGLScene window;
+    //NGLScene window(oname);
     // and set the OpenGL format
     window.setFormat(format);
     // we can now query the version to see if it worked
@@ -104,5 +103,5 @@ int main(int argc, char **argv)
 
     return app.exec();
     
-   return 0;
 }
+

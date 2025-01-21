@@ -1,16 +1,23 @@
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
-#include <ngl/Vec3.h>
+#include <ngl/AbstractVAO.h>
 #include <ngl/Mat4.h>
-#include <ngl/Obj.h>
-#include <ngl/Text.h>
-#include <ngl/Transformation.h>
+#include <ngl/Vec3.h>
 #include "WindowParams.h"
 #include <QOpenGLWindow>
 #include <memory>
 
 //----------------------------------------------------------------------------------------------------------------------
-/// version of the NGLScene class written by Jonathan Macey, adapted by Robin van den Eerenbeemd to load an obj file
+/// @file NGLScene.h
+/// @brief this class inherits from the Qt OpenGLWindow and allows us to use NGL to draw OpenGL
+/// @author Jonathan Macey
+/// @version 1.0
+/// @date 10/9/13
+/// Revision History :
+/// This is an initial version used for the new NGL6 / Qt 5 demos
+/// @class NGLScene
+/// @brief our main glwindow widget for NGL applications all drawing elements are
+/// put in this file
 //----------------------------------------------------------------------------------------------------------------------
 
 class NGLScene : public QOpenGLWindow
@@ -20,100 +27,79 @@ class NGLScene : public QOpenGLWindow
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene(const std::string &_oname);
+    NGLScene();
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
-    ~NGLScene() override;
+    ~NGLScene();
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief the initialize class is called once when the window is created and we have a valid GL context
     /// use this to setup any default GL stuff
     //----------------------------------------------------------------------------------------------------------------------
-    void initializeGL() override;
+    void initializeGL();
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
-    void paintGL() override;
+    void paintGL();
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief called when window is resized
+    /// @brief this is called everytime we resize
     //----------------------------------------------------------------------------------------------------------------------
-    void resizeGL(int _w, int _h) override;
-
-
+    void resizeGL(int _w, int _h);
 private:
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief the windows params such as mouse and rotations etc
-    //----------------------------------------------------------------------------------------------------------------------
-    WinParams m_win;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief used to store the global mouse transforms
-    //----------------------------------------------------------------------------------------------------------------------
-    ngl::Mat4 m_mouseGlobalTX;
+     /// @brief the windows params such as mouse and rotations etc
+     //----------------------------------------------------------------------------------------------------------------------
+     WinParams m_win;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Our Camera
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Mat4 m_view;
     ngl::Mat4 m_project;
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief transformation stack for the gl transformations etc
-    //----------------------------------------------------------------------------------------------------------------------
-    ngl::Transformation m_transform;
-    //----------------------------------------------------------------------------------------------------------------------
     /// @brief the model position for mouse movement
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Vec3 m_modelPos;
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief our model
+    /// @brief used to store the global mouse transforms
     //----------------------------------------------------------------------------------------------------------------------
-    std::unique_ptr<ngl::Obj> m_mesh;
+    ngl::Mat4 m_mouseGlobalTX;
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief flag to show bounding box
+    /// @brief a simple light use to illuminate the screen
     //----------------------------------------------------------------------------------------------------------------------
-    bool m_showBBox;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief flag to show bounding sphere
-    //----------------------------------------------------------------------------------------------------------------------
-    bool m_showBSphere;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief text for rendering
-    //----------------------------------------------------------------------------------------------------------------------
-    std::unique_ptr<ngl::Text> m_text;
-    //----------------------------------------------------------------------------------------------------------------------
-    /// @brief method to load transform matrices to the shader
-    //----------------------------------------------------------------------------------------------------------------------
-    void loadMatricesToShader();
+    std::unique_ptr<ngl::AbstractVAO> m_vao;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Qt Event called when a key is pressed
     /// @param [in] _event the Qt event to query for size etc
     //----------------------------------------------------------------------------------------------------------------------
-    void keyPressEvent(QKeyEvent *_event) override;
+    void keyPressEvent(QKeyEvent *_event);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called every time a mouse is moved
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
-    void mouseMoveEvent (QMouseEvent * _event ) override;
+    void mouseMoveEvent (QMouseEvent * _event );
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse button is pressed
     /// inherited from QObject and overridden here.
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
-    void mousePressEvent ( QMouseEvent *_event) override;
+    void mousePressEvent ( QMouseEvent *_event);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse button is released
     /// inherited from QObject and overridden here.
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
-    void mouseReleaseEvent ( QMouseEvent *_event ) override;
+    void mouseReleaseEvent ( QMouseEvent *_event );
 
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this method is called everytime the mouse wheel is moved
     /// inherited from QObject and overridden here.
     /// @param _event the Qt Event structure
     //----------------------------------------------------------------------------------------------------------------------
-    void wheelEvent( QWheelEvent *_event) override;
-
-    std::string m_objFileName;
-    //std::string m_textureFileName;
+    void wheelEvent( QWheelEvent *_event);
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief build our VAO
+    //----------------------------------------------------------------------------------------------------------------------
+    void buildVAO();
 
 
 };

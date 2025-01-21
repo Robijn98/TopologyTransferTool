@@ -5,6 +5,8 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <iterator>
 
+
+
 bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
 {
     if(std::filesystem::is_empty(filename))
@@ -96,3 +98,63 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
     std::cout << "Input mesh is already triangulated.\n";  
  }
  
+
+
+ void Mesh::assignColors(Polygon_mesh &polygon)
+ {
+  
+  std::ofstream file("vertex_colors.txt");
+  if(!file)
+  {
+    std::cerr << "Error opening file.\n";
+    return;
+  }
+
+    for(vertex_descriptor v : vertices(polygon))
+    {
+      CGAL::IO::Color color = CGAL::IO::Color(255, 0, 0);
+      file << color << "\n";
+    }
+
+    file.close();
+    std::cout << "Colors written to file.\n";
+ }
+
+
+std::vector<std::array<float, 3>> Mesh::getVertexColors(const std::string &filename)
+{
+  std::ifstream file(filename);
+  if(!file)
+  {
+    std::cerr << "Error opening file.\n";
+    return {};
+  }
+
+  std::vector<std::array<float, 3>> colors;
+  std::string line;
+  while(std::getline(file, line))
+  {
+    std::istringstream iss(line);
+    float r, g, b;
+    iss >> r >> g >> b;
+    colors.push_back({r, g, b});
+  }
+
+  file.close();
+  return colors;
+}
+
+std::vector<ngl::Vec3> Mesh::interleavePosAndColor(Polygon_mesh &polygon, std::vector<std::array<float, 3>> &vertexColors)
+{
+  std::vector<ngl::Vec3> interleaved;  // Using vector instead of std::array
+  int i = 0;
+  for (vertex_descriptor v : vertices(polygon))
+  {
+    Point p = polygon.point(v);
+    interleaved.push_back({static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z())});
+    interleaved.push_back({vertexColors[i][0]/255, vertexColors[i][1]/255, vertexColors[i][2]/255});
+    i++;
+  }
+
+  return interleaved;
+}
