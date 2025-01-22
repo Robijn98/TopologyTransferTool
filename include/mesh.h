@@ -30,7 +30,7 @@ public:
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
     bool validateMesh(Polygon_mesh &polygon);
     void triangulateMesh(Polygon_mesh &polygon);
-    void assignColors(Polygon_mesh &polygon);
+    void assignColors(Polygon_mesh &polygon, std::string outputFile);
     std::vector<std::array<float, 3>> getVertexColors(const std::string &filename);
     std::vector<ngl::Vec3> interleavePosAndColor(Polygon_mesh &polygon, std::vector<std::array<float, 3>> &vertexColors);
 private:

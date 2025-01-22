@@ -91,18 +91,10 @@ void NGLScene::buildVAO()
     for (vertex_descriptor v : vertices_around_face(polygonSource.halfedge(f), polygonSource))
     {
       indices.push_back(v);
-      std::cout << v << " ";
+      //std::cout << v << " ";
     }
-    std::cout << "\n";
+    //std::cout << "\n";
   }
-
-  // // Debug output for indices
-  // std::cout << "Generated Indices: ";
-  // for (size_t i = 0; i < indices.size(); ++i)
-  // {
-  //   std::cout << indices[i] << " ";
-  // }
-  // std::cout << "\n";
 
 
   // Create and bind VAO

@@ -100,21 +100,88 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
  
 
 
- void Mesh::assignColors(Polygon_mesh &polygon)
+ void Mesh::assignColors(Polygon_mesh &polygon, std::string outputFile)
  {
-  
-  std::ofstream file("vertex_colors.txt");
-  if(!file)
+  Polygon_mesh outputMesh;
+  if(!PMP::IO::read_polygon_mesh(outputFile, outputMesh))
   {
-    std::cerr << "Error opening file.\n";
+    std::cerr << "Invalid input for assigning colours.\n";
     return;
   }
 
-    for(vertex_descriptor v : vertices(polygon))
-    {
-      CGAL::IO::Color color = CGAL::IO::Color(255, 0, 0);
-      file << color << "\n";
+
+  std::ofstream file("vertex_colors.txt");
+  if(!file)
+  {
+    std::cerr << "Error opening file vertex colors\n";
+    return;
+  }
+
+
+double furthest_distance = 0;
+for(vertex_descriptor v : vertices(polygon))
+{
+  Point p = outputMesh.point(v);
+  Point p_org = polygon.point(v);
+
+    // Calculate the squared distance between points
+    double distance = CGAL::squared_distance(p, p_org);
+
+    // Update the furthest point if this distance is greater
+    if (distance > furthest_distance) {
+        furthest_distance = distance;
     }
+  }
+
+
+
+  //based on the distance from the furthest point, assign colors
+  for(vertex_descriptor v : vertices(polygon))
+  {
+      Point p = outputMesh.point(v);
+      Point p_org = polygon.point(v);
+
+
+      double distance = CGAL::squared_distance(p, p_org);
+      double ratio;
+      std::cout << "ratio: " << ratio << "\n";
+      if(furthest_distance < 0.0001)
+      {
+          ratio = 0;
+      }
+      else
+      {
+          ratio = distance / furthest_distance;
+      }
+      if(ratio >= 0.0 && ratio < 0.2)
+      {
+        CGAL::IO::Color color = CGAL::IO::Color(248, 187, 208);
+        file << color << "\n";
+      }
+      if(ratio >= 0.2 && ratio < 0.4)
+      {
+        CGAL::IO::Color color = CGAL::IO::Color(240, 98, 146);
+        file << color << "\n";
+      }
+      if(ratio >= 0.4 && ratio < 0.6)
+      {
+        CGAL::IO::Color color = CGAL::IO::Color(233, 30, 99);
+        file << color << "\n";
+      }
+      if(ratio >= 0.6 && ratio < 0.8)
+      {
+        CGAL::IO::Color color = CGAL::IO::Color(168, 50, 50);
+        file << color << "\n";
+      }
+      if(ratio >= 0.8 && ratio <= 1.0)
+      {
+        CGAL::IO::Color color = CGAL::IO::Color(123, 30, 30);
+        file << color << "\n";
+      }
+
+
+  }
+
 
     file.close();
     std::cout << "Colors written to file.\n";

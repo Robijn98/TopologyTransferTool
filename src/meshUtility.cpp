@@ -163,17 +163,17 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_top_xy = top_xy_points[top_xy_points.size() / 2];
 
-    std::cout << "//midPoint_right_xz: " << "\n";
-    std::cout << "spaceLocator -p " << midpoint_right_xz.x() << " " << midpoint_right_xz.y() << " " << midpoint_right_xz.z() << ";\n";
+    // std::cout << "//midPoint_right_xz: " << "\n";
+    // std::cout << "spaceLocator -p " << midpoint_right_xz.x() << " " << midpoint_right_xz.y() << " " << midpoint_right_xz.z() << ";\n";
 
-    std::cout << "//midPoint_bottom_xy: " << "\n";
-    std::cout << "spaceLocator -p " << midpoint_bottom_xy.x() << " " << midpoint_bottom_xy.y() << " " << midpoint_bottom_xy.z() << ";\n";
+    // std::cout << "//midPoint_bottom_xy: " << "\n";
+    // std::cout << "spaceLocator -p " << midpoint_bottom_xy.x() << " " << midpoint_bottom_xy.y() << " " << midpoint_bottom_xy.z() << ";\n";
 
-    std::cout << "//midPoint_left_xz: " << "\n";
-    std::cout << "spaceLocator -p " << midpoint_left_xz.x() << " " << midpoint_left_xz.y() << " " << midpoint_left_xz.z() << ";\n";
+    // std::cout << "//midPoint_left_xz: " << "\n";
+    // std::cout << "spaceLocator -p " << midpoint_left_xz.x() << " " << midpoint_left_xz.y() << " " << midpoint_left_xz.z() << ";\n";
 
-    std::cout << "//midPoint_top_xy: " << "\n";
-    std::cout << "spaceLocator -p " << midpoint_top_xy.x() << " " << midpoint_top_xy.y() << " " << midpoint_top_xy.z() << ";\n";
+    // std::cout << "//midPoint_top_xy: " << "\n";
+    // std::cout << "spaceLocator -p " << midpoint_top_xy.x() << " " << midpoint_top_xy.y() << " " << midpoint_top_xy.z() << ";\n";
 
 
 
@@ -188,13 +188,13 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
     triangles["triangle8"] = {midpoint_bottom_xy, midpoint_left_xz, intersection2};
 
-    for(const auto& triangle : triangles) 
-    {
-        std::cout<< "//Triangle: " << triangle.first << "\n";
-        std::cout<< "spaceLocator -p " << triangle.second[0] << ";\n";
-        std::cout << "spaceLocator -p " << triangle.second[1] << ";\n";
-        std::cout << "spaceLocator -p " << triangle.second[2] << ";\n";
-    }
+    // for(const auto& triangle : triangles) 
+    // {
+    //     std::cout<< "//Triangle: " << triangle.first << "\n";
+    //     std::cout<< "spaceLocator -p " << triangle.second[0] << ";\n";
+    //     std::cout << "spaceLocator -p " << triangle.second[1] << ";\n";
+    //     std::cout << "spaceLocator -p " << triangle.second[2] << ";\n";
+    // }
 
     //turn points into faces    
     for(const auto& triangle : triangles) 
@@ -205,12 +205,12 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         debugMesh.add_face(v0, v1, v2);
     }
 
-    //print all faces
-    for(Polygon_mesh::Face_index f : faces(debugMesh))
-    {
-        std::cout << "Face: " << f << "\n";
+    // //print all faces
+    // for(Polygon_mesh::Face_index f : faces(debugMesh))
+    // {
+    //     std::cout << "Face: " << f << "\n";
 
-    }
+    // }
 
 
     //scale up the cage to be bigger than the original mesh
