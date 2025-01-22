@@ -83,10 +83,6 @@ void NGLScene::buildVAO()
   std::vector<std::array<float, 3>> vertexColors = mesh.getVertexColors("vertex_colors.txt");
   std::vector<ngl::Vec3> interleavedData = mesh.interleavePosAndColor(polygonSource, vertexColors);
 
-  // for(auto &i : interleavedData)
-  //   {
-  //     std::cout << "Interleaved Data: " << i.m_x << " " << i.m_y << " " << i.m_z << "\n";
-  //   }
     
   // Generate indices from faces
   std::vector<GLshort> indices;
@@ -94,8 +90,10 @@ void NGLScene::buildVAO()
   {
     for (vertex_descriptor v : vertices_around_face(polygonSource.halfedge(f), polygonSource))
     {
-      indices.push_back(v + 1);
+      indices.push_back(v);
+      std::cout << v << " ";
     }
+    std::cout << "\n";
   }
 
   // // Debug output for indices
@@ -113,22 +111,14 @@ void NGLScene::buildVAO()
 
 
  m_vao->setData(ngl::SimpleIndexVAO::VertexData(
-      interleavedData.size()*12,
+      interleavedData.size()*sizeof(ngl::Vec3),
       interleavedData[0].m_x,
-      indices.size()*2, &indices[0],
+      indices.size()*sizeof(indices[0]), &indices[0],
       GL_UNSIGNED_SHORT));
 
-
-    std::cout << "sizeof vertAndColour " << interleavedData.size() << '\n';
-    std::cout << "vertAndColour[0].m_x " << interleavedData[0].m_x << '\n';
-    std::cout << "sizeof indices " << indices.size() << '\n';
-    std::cout << "indices[0] " << &indices[0] << '\n';
-
-
-
   // Set vertex attribute pointers
-  m_vao->setVertexAttributePointer(0, 3, GL_FLOAT, sizeof(interleavedData), 0); 
-  m_vao->setVertexAttributePointer(1, 3, GL_FLOAT, sizeof(interleavedData), 3); 
+  m_vao->setVertexAttributePointer(0, 3, GL_FLOAT, sizeof(ngl::Vec3)*2, 0); 
+  m_vao->setVertexAttributePointer(1, 3, GL_FLOAT, sizeof(ngl::Vec3)*2, 3); 
 
   // Specify the number of indices
   m_vao->setNumIndices(indices.size());

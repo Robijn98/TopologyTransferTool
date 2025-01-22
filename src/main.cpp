@@ -12,8 +12,8 @@ int main(int argc, char **argv)
     Mesh mesh;
     Polygon_mesh polygonSource;
     Polygon_mesh polygonTarget;
-    std::string filenameSource = "files/cube_mesh.obj";
-    std::string filenameTarget = "files/oval.obj";
+    std::string filenameSource = "files/normal_sphere_export.obj";
+    std::string filenameTarget = "files/deformed_sphere_export.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
     std::cout << "Mesh loaded successfully\n";
@@ -32,11 +32,11 @@ int main(int argc, char **argv)
     Polygon_mesh debugMesh;
     Polygon_mesh debugMesh2;
 
-    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh,  0.05, 0.05);
+    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh,  1e-6, 1e-6);
 
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2, 1e-6, 1e-6);
+    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2, 0.5, 0.5);
 
     meshUtil.computeBarycentric_coordinates(polygonSource, debugMesh, triangles, barycentric_coordinates);
 
