@@ -1,28 +1,10 @@
 <div align="center">
 
-[![Forks](https://img.shields.io/badge/forks-0-lightgrey?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/forks)
-[![Stars](https://img.shields.io/badge/stars-0-lightgrey?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/stargazers)
-[![Issues](https://img.shields.io/badge/issues-1-red?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/issues)
-[![Unlicense License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]:https://github.com/NCCA/programming-project-Robijn98/forks
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/NCCA/programming-project-Robijn98/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/NCCA/programming-project-Robijn98/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/robin-van-den-eerenbeemd-23494a172/
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/NCCA/programming-project-Robijn98">
-    <img src="images/wireFrame.png" alt="Logo" width="80" height="80">
+    <img src="images/wireFrame.png" alt="Logo" width="250">
   </a>
   <h3 align="center">Wrapping meshes</h3>
   
@@ -39,7 +21,7 @@ to preserve the relative positions of the vertices from the source when it's wra
 ### Built With
 <div align="center">
   
-[![C++](https://img.shields.io/badge/C++-00599C.svg?&style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![C++](https://img.shields.io/badge/C++-00599C.svg?&logo=cplusplus&logoColor=white)](#)
 [![CMake](https://img.shields.io/badge/build-CMake-blue?logo=cmake&logoColor=white)](#)
 [![Linux](https://img.shields.io/badge/platform-Linux-green?logo=linux&logoColor=white)](#)
 [![GTest](https://img.shields.io/badge/tests-Google%20Test-brightgreen?logo=googletest&logoColor=white)](#)
@@ -89,7 +71,8 @@ tresholds might be needed.
 ![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/class_diagram/class_diagram.png)
 
 
-
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 https://github.com/othneildrew/Best-README-Template/blob/main/README.md#roadmap
+
+
