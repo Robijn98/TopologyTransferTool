@@ -13,8 +13,8 @@ int main(int argc, char **argv)
     Polygon_mesh polygonSource;
     Polygon_mesh polygonTarget;
     Polygon_mesh polygonSource_original;
-    std::string filenameSource = "files/cube_mesh.obj";
-    std::string filenameTarget = "files/oval.obj";
+    std::string filenameSource = "files/normal_sphere_export.obj";
+    std::string filenameTarget = "files/deformed_sphere_export.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
     mesh.loadMesh(filenameSource, polygonSource_original);
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2,  1e-6, 1e-6);
+    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2,  0.5, 0.5);
 
     meshUtil.computeBarycentric_coordinates(polygonSource, debugMesh, triangles, barycentric_coordinates);
 
@@ -55,10 +55,17 @@ int main(int argc, char **argv)
     output.updateFileWithWrap("files/output.obj", WrappedPoints);
     
 
+    // //post processing
+    // Polygon_mesh smoothedMesh;
+    // mesh.loadMesh("files/output.obj", smoothedMesh);
+    // meshUtil.relaxMesh(smoothedMesh);
+    // output.writeMesh("files/output.obj", smoothedMesh);
+
     //colours
     mesh.assignColors(polygonSource, "files/output.obj");
     std::string vertexColorsFile = "vertex_colors.txt";
     
+
 
 
 

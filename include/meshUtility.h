@@ -38,6 +38,7 @@ class meshUtility
         std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource);
 
         void relaxMesh(Polygon_mesh &polygon);
+        
     private:
 
 };

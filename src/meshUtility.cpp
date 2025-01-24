@@ -16,6 +16,11 @@
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>  
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/smooth_shape.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
@@ -27,7 +32,9 @@ typedef CGAL::AABB_traits<Kernel, Primitive> AABB_Traits;
 typedef CGAL::AABB_tree<AABB_Traits> AABB_Tree;
 typedef Kernel::Vector_3 Vector_3;
 typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
+//typedef boost::graph_traits<Mesh>::edge_descriptor   edge_descriptor;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 
 std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double z_threshold, double y_threshold)
@@ -163,19 +170,6 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
     Point_3 midpoint_top_xy = top_xy_points[top_xy_points.size() / 2];
 
-    // std::cout << "//midPoint_right_xz: " << "\n";
-    // std::cout << "spaceLocator -p " << midpoint_right_xz.x() << " " << midpoint_right_xz.y() << " " << midpoint_right_xz.z() << ";\n";
-
-    // std::cout << "//midPoint_bottom_xy: " << "\n";
-    // std::cout << "spaceLocator -p " << midpoint_bottom_xy.x() << " " << midpoint_bottom_xy.y() << " " << midpoint_bottom_xy.z() << ";\n";
-
-    // std::cout << "//midPoint_left_xz: " << "\n";
-    // std::cout << "spaceLocator -p " << midpoint_left_xz.x() << " " << midpoint_left_xz.y() << " " << midpoint_left_xz.z() << ";\n";
-
-    // std::cout << "//midPoint_top_xy: " << "\n";
-    // std::cout << "spaceLocator -p " << midpoint_top_xy.x() << " " << midpoint_top_xy.y() << " " << midpoint_top_xy.z() << ";\n";
-
-
 
     //create dictionary for triangles to be used for barycentric coordinates
     std::map<std::string, std::array<Point, 3>> triangles; 
@@ -188,14 +182,6 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
     triangles["triangle8"] = {midpoint_bottom_xy, midpoint_left_xz, intersection2};
 
-    // for(const auto& triangle : triangles) 
-    // {
-    //     std::cout<< "//Triangle: " << triangle.first << "\n";
-    //     std::cout<< "spaceLocator -p " << triangle.second[0] << ";\n";
-    //     std::cout << "spaceLocator -p " << triangle.second[1] << ";\n";
-    //     std::cout << "spaceLocator -p " << triangle.second[2] << ";\n";
-    // }
-
     //turn points into faces    
     for(const auto& triangle : triangles) 
     {
@@ -204,14 +190,6 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         vertex_descriptor v2 = add_vertex(triangle.second[2], debugMesh);
         debugMesh.add_face(v0, v1, v2);
     }
-
-    // //print all faces
-    // for(Polygon_mesh::Face_index f : faces(debugMesh))
-    // {
-    //     std::cout << "Face: " << f << "\n";
-
-    // }
-
 
     //scale up the cage to be bigger than the original mesh
     for(vertex_descriptor v : vertices(debugMesh))
@@ -223,8 +201,6 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
 
     std::cout << "Mesh divided successfully into: "<< triangles.size() << " triangles\n";
-
-
 
     return triangles;
 }
@@ -410,3 +386,19 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
     return WrappedPoints;
 }
 
+
+void meshUtility::relaxMesh(Polygon_mesh &polygon)
+{
+    //constraint edges with a dihedral angle over 60 degrees
+    typedef boost::property_map<Polygon_mesh, CGAL::edge_is_feature_t>::type EIFMap;
+    EIFMap eif = get(CGAL::edge_is_feature, polygon);
+    PMP::detect_sharp_edges(polygon, 90, eif);
+
+    int sharp_counter = 0;
+    
+
+    PMP::angle_and_area_smoothing(polygon, PMP::parameters::number_of_iterations(100).use_safety_constraints(false).edge_is_constrained_map(eif));
+    
+    std::cout << "Mesh relaxed successfully\n";
+
+}

@@ -16,7 +16,7 @@
 
 NGLScene::NGLScene()
 {
-  setTitle("Qt5 SimpleIndexVAO created from VAOFactory NGL Demo");
+  setTitle("wrapper viewer");
 }
 
 NGLScene::~NGLScene()
