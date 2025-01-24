@@ -13,7 +13,9 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Polygon_mesh;
 
 struct Output
 {
+    //writes mesh to an obj file
     void writeMesh(std::string filename, Polygon_mesh &polygon);
+    //updates the obj file with the wrapped points
     void updateFileWithWrap(std::string filename, std::map<int, std::vector<Point>> WrappedPoints);
 };  
 

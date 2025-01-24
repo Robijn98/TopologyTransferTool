@@ -5,6 +5,7 @@
 
 void Output::writeMesh(std::string filename, Polygon_mesh &polygon)
 {
+  //check file if file is not empty write to an obj
   if (filename.empty())
   {
     std::cout << "new file\n";
@@ -16,13 +17,14 @@ void Output::writeMesh(std::string filename, Polygon_mesh &polygon)
 
 void Output::updateFileWithWrap(std::string filename, std::map<int, std::vector<Point>> WrappedPoints)
 {
-  std::cout<< "Updating file with wrapped points\n";
   std::ifstream infile(filename);
   std::string line;
 
   std::string newFile = "new.obj";
   std::ofstream outfile(newFile);
   bool wrapProcessed = false;
+
+  //read the file and store vertices
     while(std::getline(infile, line))
     {
       std::string prefix;
@@ -41,8 +43,7 @@ void Output::updateFileWithWrap(std::string filename, std::map<int, std::vector<
         if(!wrapProcessed)
         {
           
-            //std::cout << "found vertex\n";
-            //we need to put all the vertex in the new file
+            //put all the vertices in the new file
             for(const auto &[key, point] : WrappedPoints)
             {
               for(const auto &point : point)
@@ -60,7 +61,7 @@ void Output::updateFileWithWrap(std::string filename, std::map<int, std::vector<
     infile.close();
     outfile.close();
     
-
+    //remove the old file and rename the new file
     std::remove(filename.c_str());
     std::rename(newFile.c_str(), filename.c_str());
   }

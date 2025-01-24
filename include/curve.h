@@ -17,8 +17,11 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 class Curve
 {
     public:
+        //load curve from obj file
         bool loadCurve(std::string filename, std::vector<Point> &curve);
+        //turns continuous curve into piecewise linear curve and returns points on that curve
         std::vector<Point> discretizeCurve(std::vector<Point> &curve, std::vector<Point> &curveOut, int numPoints);
+        //project points from source curve to target curve
         std::vector<Point> projectPoints(std::vector<Point> &curveSource, std::vector<Point> &curveTarget, std::vector<Point> &projectedCurve);
     
     private:

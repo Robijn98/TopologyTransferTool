@@ -32,7 +32,6 @@ typedef CGAL::AABB_traits<Kernel, Primitive> AABB_Traits;
 typedef CGAL::AABB_tree<AABB_Traits> AABB_Tree;
 typedef Kernel::Vector_3 Vector_3;
 typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
-//typedef boost::graph_traits<Mesh>::edge_descriptor   edge_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -99,8 +98,6 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
             if (a.y() != b.y()) return a.y() < b.y();
             return a.z() < b.z();
         });
-    
-    
     
     
     Point intersection1 = intersection_points[0];

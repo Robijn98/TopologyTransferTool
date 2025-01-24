@@ -9,20 +9,21 @@
 
 bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
 {
-    if(std::filesystem::is_empty(filename))
+  //check if file is empty
+  if(std::filesystem::is_empty(filename))
   {
     std::cerr << "Empty file.\n" ;
     return 0;
   }
 
-  //create temporary file to store mesh without line
+  //create temporary file to store mesh without curve
   std::string tempFile = "temp.obj";
   std::ifstream infile(filename);
 
   std::ofstream temp(tempFile);
 
   std::string line;
-
+  //read the file and store points that are not l lines
   while(std::getline(infile, line))
   {
     std::istringstream iss(line);
@@ -102,6 +103,7 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
 
  void Mesh::assignColors(Polygon_mesh &polygon, std::string outputFile)
  {
+  //check files
   Polygon_mesh outputMesh;
   if(!PMP::IO::read_polygon_mesh(outputFile, outputMesh))
   {
@@ -117,7 +119,7 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
     return;
   }
 
-
+//find the furthest point
 double furthest_distance = 0;
 for(vertex_descriptor v : vertices(polygon))
 {
@@ -135,7 +137,7 @@ for(vertex_descriptor v : vertices(polygon))
 
 
 
-  //based on the distance from the furthest point, assign colors
+  //based on the distance from the furthest point, assign colors in steps of 0.2
   for(vertex_descriptor v : vertices(polygon))
   {
       Point p = outputMesh.point(v);
@@ -144,7 +146,6 @@ for(vertex_descriptor v : vertices(polygon))
 
       double distance = CGAL::squared_distance(p, p_org);
       double ratio;
-      std::cout << "ratio: " << ratio << "\n";
       if(furthest_distance < 0.0001)
       {
           ratio = 0;
@@ -190,13 +191,15 @@ for(vertex_descriptor v : vertices(polygon))
 
 std::vector<std::array<float, 3>> Mesh::getVertexColors(const std::string &filename)
 {
+  //open the color file
   std::ifstream file(filename);
   if(!file)
   {
     std::cerr << "Error opening file.\n";
     return {};
   }
-
+  
+  //get colors from file and store in vector
   std::vector<std::array<float, 3>> colors;
   std::string line;
   while(std::getline(file, line))
@@ -213,7 +216,8 @@ std::vector<std::array<float, 3>> Mesh::getVertexColors(const std::string &filen
 
 std::vector<ngl::Vec3> Mesh::interleavePosAndColor(Polygon_mesh &polygon, std::vector<std::array<float, 3>> &vertexColors)
 {
-  std::vector<ngl::Vec3> interleaved;  // Using vector instead of std::array
+  std::vector<ngl::Vec3> interleaved;
+  // Interleave the positions and colors and return the interleaved vector
   int i = 0;
   for (vertex_descriptor v : vertices(polygon))
   {

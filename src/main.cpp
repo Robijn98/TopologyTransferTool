@@ -9,50 +9,54 @@
 
 int main(int argc, char **argv)
 {
+    //all changable parameters
+    std::string filenameSource = "files/normal_sphere_export.obj";
+    std::string filenameTarget = "files/deformed_sphere_export.obj";
+    std::string filenameOutput = "files/output.obj";
+    double threshold_y_source = 1e-6;
+    double threshold_z_source = 1e-6;
+    double threshold_y_target = 0.5;
+    double threshold_z_target = 0.5;
+    
+
+    //mesh processing, loading and validation
     Mesh mesh;
     Polygon_mesh polygonSource;
     Polygon_mesh polygonTarget;
     Polygon_mesh polygonSource_original;
-    std::string filenameSource = "files/normal_sphere_export.obj";
-    std::string filenameTarget = "files/deformed_sphere_export.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
     mesh.loadMesh(filenameSource, polygonSource_original);
 
-
-    std::cout << "Mesh loaded successfully\n";
     mesh.validateMesh(polygonSource);
     mesh.triangulateMesh(polygonSource);
 
     mesh.loadMesh(filenameTarget, polygonTarget);
-    //mesh.validateMesh(polygonTarget);
-    //mesh.triangulateMesh(polygonTarget);
+    mesh.validateMesh(polygonTarget);
+    mesh.triangulateMesh(polygonTarget);
 
 
-    //mesh utility
+    //mesh utility, barycentric coordinates, wrapping
     meshUtility meshUtil;
     std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> barycentric_coordinates;
     std::map<std::string, std::array<Point, 3>> triangles;
     Polygon_mesh debugMesh;
     Polygon_mesh debugMesh2;
 
-    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh,  1e-6, 1e-6);
-
+    triangles = meshUtil.divideMeshForBarycentricComputing(polygonSource, debugMesh, threshold_z_source, threshold_y_source);
 
     std::map<std::string, std::array<Point, 3>> trianglesTarget;
-    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2,  0.5, 0.5);
+    trianglesTarget = meshUtil.divideMeshForBarycentricComputing(polygonTarget, debugMesh2, threshold_z_target, threshold_y_target);
 
     meshUtil.computeBarycentric_coordinates(polygonSource, debugMesh, triangles, barycentric_coordinates);
-
 
     std::map<int, std::vector<Point>> WrappedPoints;
     WrappedPoints = meshUtil.initialWrapping(debugMesh, debugMesh2, polygonSource, barycentric_coordinates);
     
-   
-    //output
+    //output writing obj file
     Output output;
-    output.writeMesh("files/output.obj", polygonSource);
-    output.updateFileWithWrap("files/output.obj", WrappedPoints);
+    output.writeMesh(filenameOutput, polygonSource);
+    output.updateFileWithWrap(filenameOutput, WrappedPoints);
     
 
     // //post processing
@@ -61,15 +65,13 @@ int main(int argc, char **argv)
     // meshUtil.relaxMesh(smoothedMesh);
     // output.writeMesh("files/output.obj", smoothedMesh);
 
-    //colours
-    mesh.assignColors(polygonSource, "files/output.obj");
-    std::string vertexColorsFile = "vertex_colors.txt";
-    
 
-
+    //assign colours for viewer
+    mesh.assignColors(polygonSource, filenameOutput);    
 
 
     //viewer
+    //check if mesh is triangulated
     if(!CGAL::is_triangle_mesh(polygonSource))
     {
     throw std::runtime_error("Input mesh is not triangulated");
@@ -79,7 +81,6 @@ int main(int argc, char **argv)
     std::cout << "Input mesh is triangulated, continuing with viewer\n";
     }
 
-    
     
     QApplication app(argc, argv);
     QSurfaceFormat format;

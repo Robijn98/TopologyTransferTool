@@ -26,17 +26,15 @@ typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               hal
 class meshUtility
 {
     public:
+        //creates a map of triangles, triangles are determined by dividing the mesh into an octohedron
         std::map<std::string, std::array<Point, 3>> divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double z_threshold, double y_threshold);
-        
-        // void clampBarycentricCoordinates(double &u, double &v, double &w, const Point &P, 
-        // const Point &P0, const Point &P1, const Point &P2);
-        
+        //calculates the barycentric coordinates of the mesh based on an octohedron
         void computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, 
         std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinates);
-
+        //wraps the source mesh to the target mesh based on the ocothedrons for both meshes and the barycentric coordinates
         std::map<int, std::vector<Point>> initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh,
         std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource);
-
+        //relaxes the mesh 
         void relaxMesh(Polygon_mesh &polygon);
         
     private:

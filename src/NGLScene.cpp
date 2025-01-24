@@ -44,7 +44,7 @@ void NGLScene::initializeGL()
   // Now we will create a basic Camera from the graphics library
   // This is a static camera so it only needs to be set once
   // First create Values for the camera position
-  ngl::Vec3 from(0, 1, 2);
+  ngl::Vec3 from(0, 1, 15);
   ngl::Vec3 to(0, 0, 0);
   ngl::Vec3 up(0, 1, 0);
 
@@ -91,9 +91,8 @@ void NGLScene::buildVAO()
     for (vertex_descriptor v : vertices_around_face(polygonSource.halfedge(f), polygonSource))
     {
       indices.push_back(v);
-      //std::cout << v << " ";
     }
-    //std::cout << "\n";
+
   }
 
 

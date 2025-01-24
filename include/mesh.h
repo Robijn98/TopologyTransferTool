@@ -27,11 +27,17 @@ typedef Kernel::Vector_3 Vector_3;
 class Mesh
 {
 public:
+    //load mesh from obj file
     bool loadMesh(std::string filename, Polygon_mesh &polygon);
+    //validate mesh, makes sure it is a manifold mesh with either quads or triangles
     bool validateMesh(Polygon_mesh &polygon);
+    //checks if mesh if triangulated if not triangulates it
     void triangulateMesh(Polygon_mesh &polygon);
+    //assigns colors to the vertex of the mesh and saves to a txt file
     void assignColors(Polygon_mesh &polygon, std::string outputFile);
+    //reads the colors from the txt file
     std::vector<std::array<float, 3>> getVertexColors(const std::string &filename);
+    //interleaves the position and color of the vertices and returns them into a format that the viewer accepts
     std::vector<ngl::Vec3> interleavePosAndColor(Polygon_mesh &polygon, std::vector<std::array<float, 3>> &vertexColors);
 private:
     std::string filename;

@@ -8,6 +8,7 @@
 
 bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
  {
+    //load curve from file
   std::ifstream file(filename);
     if (!file.is_open())
     {
@@ -19,20 +20,19 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
         std::cerr << "Empty file, curve not loaded\n";
         return 0;
     }
+    //create vector of points to store the curve vertices
     std::vector<Point> curveVertices;
     std::string line;
-
+    //read the file line by line and store the vertices in the curveVertices vector
     while(std::getline(file, line))
     {
         std::istringstream iss(line);
         std::string prefix;
         iss >> prefix;
-        //std::cout << prefix << "\n";
         if(prefix == "v")
         {
             double x, y, z;
             iss >> x >> y >> z;
-            //std::cout << "X Y Z Coordinates" << x << " " << y << " " << z << "\n";
             curveVertices.emplace_back(x, y, z); 
 
         }
@@ -41,7 +41,7 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
     //rewind file
     file.clear();
     file.seekg(0, std::ios::beg);
-
+    //loop through the file again and store the curve points in the curve vector if they are l lines
     while (std::getline(file, line))
     {
         std::istringstream iss(line);
@@ -59,7 +59,6 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
                 while(iss >> idx)
                 {
                 //look up the vertex in the file
-                //std::cout << curveVertices[idx - 1] << "\n";
                 curve.push_back(curveVertices[idx]);
                 }
             }    
@@ -68,13 +67,7 @@ bool Curve::loadCurve(std::string filename, std::vector<Point> &curve)
                 std::cerr << e.what() << '\n';
             }
             
-        //print all points in the curve
-        
-        // for (auto point : curve)
-        // {
-        //     std::cout << "curveVertex: " << point << "\n";
-        // }
-            
+
         std::cout << "Curve: " << filename << " loaded succesfully\n";        
         
     } 
@@ -106,8 +99,6 @@ std::vector<Point> Curve::discretizeCurve(std::vector<Point> &curve, std::vector
     
         double angle = CGAL::approximate_angle(v1, v2);
     
-        //std::cout << angle << "\n";
-
     if(angle > 0.1)
     {
         for(int j = 0; j < numPoints; j++)
@@ -127,7 +118,7 @@ std::vector<Point> Curve::discretizeCurve(std::vector<Point> &curve, std::vector
     }
 
     }
-    //print curve name
+
     std::cout << "Curve discretized succesfully\n";
     
     return curveOut;
@@ -156,7 +147,6 @@ std::vector<Point> Curve:: projectPoints(std::vector<Point> &curveSource, std::v
 
 
         projectedCurve.push_back(newPoint);
-        //std::cerr<< curveSource[i] << "\n";
     }
     std::cout << "Curve points projected succesfully\n";
 
