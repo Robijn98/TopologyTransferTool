@@ -12,7 +12,6 @@ int main(int argc, char **argv)
     //all changable parameters
     std::string filenameSource = "files/normal_sphere_export.obj";
     std::string filenameTarget = "files/deformed_sphere_export.obj";
-    std::string filenameOutput = "files/output.obj";
     double threshold_y_source = 1e-6;
     double threshold_z_source = 1e-6;
     double threshold_y_target = 0.5;
@@ -54,6 +53,7 @@ int main(int argc, char **argv)
     WrappedPoints = meshUtil.initialWrapping(debugMesh, debugMesh2, polygonSource, barycentric_coordinates);
     
     //output writing obj file
+    std::string filenameOutput = "files/output.obj";
     Output output;
     output.writeMesh(filenameOutput, polygonSource);
     output.updateFileWithWrap(filenameOutput, WrappedPoints);
