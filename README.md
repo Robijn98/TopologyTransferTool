@@ -1,8 +1,8 @@
 <div align="center">
 
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
+[![Forks](https://img.shields.io/badge/forks-0-lightgrey?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/forks)
+[![Stars](https://img.shields.io/badge/stars-0-lightgrey?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/stargazers)
+[![Issues](https://img.shields.io/badge/issues-1-red?style=for-the-badge)](https://github.com/NCCA/programming-project-Robijn98/issues)
 [![Unlicense License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
