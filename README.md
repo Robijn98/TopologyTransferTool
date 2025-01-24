@@ -1,27 +1,3 @@
-
-Face wrapping
-
-I want to write a piece of code that takes two meshes as inputs, one will be the source model and one the target. 
-The source model will wrap around the target while accurately resembling the patch layout of the source mesh.
-Curves will be placed on both models to guide the wrap optimization.
-
-plan:
-- Map out the source mesh, using barycentric coordinates to map all given points relative to the guidance curves
-- Discretize all given curves on source model (pre determinted) 
-- project point obtained during discretizing from source curve to target curve along the vector direction
-- using the source curves to define the fixed boundary points, we can use the geometry of the target mesh and the barycentric information form the source to calculate discrete laplacians (e.g. contangent weights for surface meshes) 
-- solve for interior points 
-- validate that the resulting topology respects the initial mapping and constraints
-
-
-
-
-Once you have wrapped the face you can use maya or a different software to blend from one rig to another and use previously created blendshapes on the new mesh. 
-
-![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/class_diagram/class_diagram.png)
-
-
-
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -68,6 +44,7 @@ Once you have wrapped the face you can use maya or a different software to blend
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#class-diagram">Class Diagram</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -75,17 +52,62 @@ Once you have wrapped the face you can use maya or a different software to blend
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+
 Wrapping mesh is an offline tool build that will allow you to wrap the topology of a source mesh onto a target mesh. 
 The tool right now is able to copy the broad lines of a mesh, taking 8 reference points and using barycentric coordinates
 to preserve the relative positions of the vertices from the source when it's wrapped to the target. 
 
 ### Built With
+
 [![C++][https://img.shields.io/badge/C++-00599C.svg?&style=for-the-badge&logo=cplusplus&logoColor=white]]
 [![CMake][https://img.shields.io/badge/build-CMake-blue?logo=cmake&logoColor=white]]
 [![Linux][https://img.shields.io/badge/platform-Linux-green?logo=linux&logoColor=white]]
-[![CGAL][https://img.shields.io/badge/CGAL-5.5.2-blue]]
+[![GTest][https://img.shields.io/badge/tests-Google%20Test-brightgreen?logo=googletest&logoColor=white]]
+[![CGAL][https://img.shields.io/badge/CGAL-5.6.1-blue]]
 [![NGL][https://img.shields.io/badge/uses-NGL-orange]]
+
 
 <!-- GETTING STARTED -->
 ## Getting Started
 ### Prerequisites
+
+To run you will need to following 
+- QT6 or QT5
+- CMake 3.12
+- CGAL 5.6.1
+- GTest
+
+### Installation
+Clone the repo
+   ```sh
+   git clone https://github.com/NCCA/programming-project-Robijn98.git
+   ```
+<!-- USAGE EXAMPLES -->
+## Usage
+
+To use the program you can put two files in main and adjust the z en y threshold.
+The z en y treshold will determine how close to the xy-plane for z en the xz-plane for y
+the program will search for the middle lines, if the program doesn't run adjusting the 
+tresholds might be needed.
+> [!WARNING]  
+> Any meshes without vertices close to these planes won't work
+
+<!-- ROADMAP -->
+## Roadmap to the future
+- [x] Use Barycentric coordinates to wrap meshes
+- [x] Have color display how far the point has moved from it's orginal position
+- [x] Add a viewer
+- [ ] Add a laplacian smoother
+- [ ] Have a UI for inputs
+- [ ] Add more precision
+
+
+<!-- class-diagram -->
+## Class diagram
+![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/class_diagram/class_diagram.png)
+
+
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+https://github.com/othneildrew/Best-README-Template/blob/main/README.md#roadmap
