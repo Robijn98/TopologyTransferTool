@@ -1,3 +1,5 @@
+<div align="center">
+
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -25,48 +27,28 @@
   <h3 align="center">Wrapping meshes</h3>
   
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#class-diagram">Class Diagram</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+<div align="left">
+
 
 Wrapping mesh is an offline tool build that will allow you to wrap the topology of a source mesh onto a target mesh. 
 The tool right now is able to copy the broad lines of a mesh, taking 8 reference points and using barycentric coordinates
 to preserve the relative positions of the vertices from the source when it's wrapped to the target. 
 
 ### Built With
+<div align="center">
+  
+[![C++](https://img.shields.io/badge/C++-00599C.svg?&style=for-the-badge&logo=cplusplus&logoColor=white)](#)
+[![CMake](https://img.shields.io/badge/build-CMake-blue?logo=cmake&logoColor=white)](#)
+[![Linux](https://img.shields.io/badge/platform-Linux-green?logo=linux&logoColor=white)](#)
+[![GTest](https://img.shields.io/badge/tests-Google%20Test-brightgreen?logo=googletest&logoColor=white)](#)
+[![CGAL](https://img.shields.io/badge/CGAL-5.6.1-blue)](#)
+[![NGL](https://img.shields.io/badge/uses-NGL-orange)](#)
 
-[![C++][https://img.shields.io/badge/C++-00599C.svg?&style=for-the-badge&logo=cplusplus&logoColor=white]]
-[![CMake][https://img.shields.io/badge/build-CMake-blue?logo=cmake&logoColor=white]]
-[![Linux][https://img.shields.io/badge/platform-Linux-green?logo=linux&logoColor=white]]
-[![GTest][https://img.shields.io/badge/tests-Google%20Test-brightgreen?logo=googletest&logoColor=white]]
-[![CGAL][https://img.shields.io/badge/CGAL-5.6.1-blue]]
-[![NGL][https://img.shields.io/badge/uses-NGL-orange]]
 
-
+<div align="left">
+  
 <!-- GETTING STARTED -->
 ## Getting Started
 ### Prerequisites
@@ -90,7 +72,7 @@ The z en y treshold will determine how close to the xy-plane for z en the xz-pla
 the program will search for the middle lines, if the program doesn't run adjusting the 
 tresholds might be needed.
 > [!WARNING]  
-> Any meshes without vertices close to these planes won't work
+> <div style="color: red;">Any meshes without vertices close to these planes won't work
 
 <!-- ROADMAP -->
 ## Roadmap to the future
