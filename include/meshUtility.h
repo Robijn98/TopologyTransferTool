@@ -35,8 +35,8 @@ class meshUtility
         std::map<int, std::vector<Point>> initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh,
         std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource);
         //relaxes the mesh 
-        void relaxMesh(Polygon_mesh &polygon);
-        
+        void relaxMesh(Polygon_mesh &polygon);     
+
     private:
 
 };

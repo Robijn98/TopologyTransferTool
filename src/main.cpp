@@ -58,14 +58,6 @@ int main(int argc, char **argv)
     output.writeMesh(filenameOutput, polygonSource);
     output.updateFileWithWrap(filenameOutput, WrappedPoints);
     
-
-    // //post processing
-    // Polygon_mesh smoothedMesh;
-    // mesh.loadMesh("files/output.obj", smoothedMesh);
-    // meshUtil.relaxMesh(smoothedMesh);
-    // output.writeMesh("files/output.obj", smoothedMesh);
-
-
     //assign colours for viewer
     mesh.assignColors(polygonSource, filenameOutput);    
 
