@@ -13,8 +13,10 @@ class "Class Mesh" {
     - vector <edge>
     - mesh
     - read_file()
-    - convert_mesh()[FBX to OBJ e.g.]
     + validate_mesh()
+    + triangluate_mesh()
+    + Interleave_pos_and_colour()
+
 }
 
 class "Class Curve" {
@@ -26,7 +28,7 @@ class "Class Curve" {
 
 class "Class MeshUtility (singleton)" {
     - Compute_barycentric_coordinates()
-    - Laplacians()
+    - Divide_mesh_for_baricentric()
     - wrap_patch_layout()
 }
 
@@ -44,7 +46,6 @@ struct "Struct Faces" {
 
 struct "Struct Output" {
     - write data to file()
-    - convert data to obj()
 }
 
 ' Relationships
