@@ -73,6 +73,24 @@ tresholds might be needed.
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
-https://github.com/othneildrew/Best-README-Template/blob/main/README.md#roadmap
+F. de Goes and A. Martinez,  2019, Mesh Wrap based on Affine-Invariant Coordinates,  Siggraph,  2019. 
+
+Educative,  2025, What are barycentric coordinates?,  Educative,  Available from: https://www.educative.io/answers/what-are-barycentric-coordinates [accessed: throughout semester]
+
+J. Vollmer,  R. Mencl, and H. Müller, 1999, Improved Laplacian Smoothing of Noisy Surface Meshes,  EUROGRAPHICS,  18 (3)
+
+J. William, J. Zarge, W. Lorensen, 1992, Decimation of Triangle Meshes,  Computer Graphics,  26 
+
+Morejpeg, 2023, Projecting a Point to a Plane in 3D, Available from: https://www.youtube.com/watch?v=w-rmBgVjW5o [accessed: 08 dec 2024] 
+
+M. Garland, and P.S. Heckbert, 1997,  Surface Simplification Using Quadric Error Metrics
+
+Ju, T. and Schaefer, S. and Warren, J.,  2005, Mean Value Coordinates for Closed Triangular Meshes,  Rice university. 
+
+Budninskiy, M. and Liu, B. and Tong, Y. and Desbrun, M.,  2017, Spectral Affine-Kernel Embeddings,  Eurographics Symposium on Geometry Processing, 36 (5)
+
+R. Vaillant, 2016, Laplacian smoothing (c++ code to smooth a mesh), Available from: https://rodolphe-vaillant.fr/entry/70/laplacian-smoothing-c-code-to-smooth-a-mesh [accessed: 19 jan 2025]
+
+O. Drew, 2025, Best read me template, Available from: https://github.com/othneildrew/Best-README-Template/blob/main/README.md#roadmap [accessed: 25 jan 2025]
 
 
