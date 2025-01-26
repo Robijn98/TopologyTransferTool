@@ -10,12 +10,12 @@
 int main(int argc, char **argv)
 {
     //all changable parameters
-    std::string filenameSource = "files/normal_sphere_export.obj";
-    std::string filenameTarget = "files/deformed_sphere_export.obj";
+    std::string filenameSource = "files/cube_mesh.obj";
+    std::string filenameTarget = "files/oval.obj";
     double threshold_y_source = 1e-6;
     double threshold_z_source = 1e-6;
-    double threshold_y_target = 0.5;
-    double threshold_z_target = 0.5;
+    double threshold_y_target = 1e-6;
+    double threshold_z_target = 1e-6;
     
 
     //mesh processing, loading and validation
