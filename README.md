@@ -6,7 +6,7 @@
   <a href="https://github.com/NCCA/programming-project-Robijn98">
     <img src="images/wireFrame.png" alt="Logo" width="250">
   </a>
-  <h3 align="center">Wrapping meshes</h3>
+  <h3 align="center">Topology Transfer Tool</h3>
   
 
 <!-- ABOUT THE PROJECT -->
@@ -14,7 +14,7 @@
 <div align="left">
 
 
-Wrapping mesh is an offline tool build that will allow you to wrap the topology of a source mesh onto a target mesh. 
+TTT is an offline tool build that will allow you to wrap the topology of a source mesh onto a target mesh. 
 The tool right now is able to copy the broad lines of a mesh, taking 8 reference points and using barycentric coordinates
 to preserve the relative positions of the vertices from the source when it's wrapped to the target. 
 
