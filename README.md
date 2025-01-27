@@ -1,4 +1,3 @@
-<div align="center">
 
 <!-- PROJECT LOGO -->
 <br />
@@ -8,14 +7,15 @@
   </a>
   <h3 align="center">Topology Transfer Tool</h3>
   
+</div>
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-<div align="left">
+
 
 
 TTT is an offline tool build that will allow you to wrap the topology of a source mesh onto a target mesh. 
-The tool right now is able to copy the broad lines of a mesh, taking 8 reference points and using barycentric coordinates
+The tool is able to copy the rough silhouette of a mesh, taking 8 reference points and using barycentric coordinates
 to preserve the relative positions of the vertices from the source when it's wrapped to the target. 
 
 ### Built With
@@ -28,9 +28,9 @@ to preserve the relative positions of the vertices from the source when it's wra
 [![CGAL](https://img.shields.io/badge/CGAL-5.6.1-blue)](#)
 [![NGL](https://img.shields.io/badge/uses-NGL-orange)](#)
 
+</div>
 
-<div align="left">
-  
+
 <!-- GETTING STARTED -->
 ## Getting Started
 ### Prerequisites
@@ -49,15 +49,15 @@ Clone the repo
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-To use the program you can put two files in main and adjust the z en y threshold.
-The z en y treshold will determine how close to the xy-plane for z en the xz-plane for y
+To use the program you can reference two files in main.cpp and adjust the z en y threshold variables.
+The z and y treshold will determine how close to the xy-plane for z en the xz-plane for y
 the program will search for the middle lines, if the program doesn't run adjusting the 
 tresholds might be needed.
 > [!WARNING]  
-> <div style="color: red;">Any meshes without vertices close to these planes won't work
+> Any meshes without vertices close to the xy or xz plane won't work
 
 <!-- ROADMAP -->
-## Roadmap to the future
+## Roadmap 
 - [x] Use Barycentric coordinates to wrap meshes
 - [x] Have color display how far the point has moved from it's orginal position
 - [x] Add a viewer
