@@ -63,7 +63,7 @@ tresholds might be needed.
 - [x] Add a viewer
 - [ ] Add a laplacian smoother
 - [ ] Have a UI for inputs
-- [ ] Add more precision
+- [ ] Add more definition to decimated mesh used for calculating barycentric coordinates 
 
 
 <!-- class-diagram -->
