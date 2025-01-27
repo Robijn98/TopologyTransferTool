@@ -73,6 +73,8 @@ tresholds might be needed.
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
+ChatGPT was used for debugging 
+
 F. de Goes and A. Martinez,  2019, Mesh Wrap based on Affine-Invariant Coordinates,  Siggraph,  2019. 
 
 Educative,  2025, What are barycentric coordinates?,  Educative,  Available from: https://www.educative.io/answers/what-are-barycentric-coordinates [accessed: throughout semester]
