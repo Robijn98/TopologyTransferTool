@@ -7,7 +7,7 @@ TEST(Output, writeMesh)
     Mesh mesh;
     Output output;
     Polygon_mesh polygon;
-    mesh.loadMesh("files/deformed_sphere_export.obj", polygon);
+    mesh.loadMesh("files/deformedSphere.obj", polygon);
     output.writeMesh("files/output.obj", polygon);
     EXPECT_TRUE("files/output.obj");
 }

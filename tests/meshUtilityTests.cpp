@@ -14,7 +14,7 @@ TEST(MeshUtility, DivideMeshForBarycentricComputing)
     Polygon_mesh polygonSource;
     Polygon_mesh ocatohedron;
     
-    std::string filenameSource = "files/normal_sphere_export.obj";
+    std::string filenameSource = "files/sphere.obj";
 
     mesh.loadMesh(filenameSource, polygonSource);
 
@@ -40,63 +40,63 @@ TEST(MeshUtility, ComputeBarycentricCoordinates)
     auto v2 = polygon.add_vertex(Point(0, 1, 0));
 
     // Add the face (triangle made from v0, v1, v2)
-    std::vector<Polygon_mesh::Vertex_index> face_vertices = {v0, v1, v2};
-    polygon.add_face(face_vertices);
+    std::vector<Polygon_mesh::Vertex_index> faceVertices = {v0, v1, v2};
+    polygon.add_face(faceVertices);
 
     // Add additional test points inside the triangle
-    auto test_point_1 = polygon.add_vertex(Point(0.25, 0.25, 0));
-    auto test_point_2 = polygon.add_vertex(Point(0.75, 0.25, 0));
+    auto testPoint1 = polygon.add_vertex(Point(0.25, 0.25, 0));
+    auto testPoint2 = polygon.add_vertex(Point(0.75, 0.25, 0));
 
     // Create a simple mesh to test against
     auto v0_octo = octahedron.add_vertex(Point(0, 0, 0));
     auto v1_octo = octahedron.add_vertex(Point(1, 0, 0));
     auto v2_octo = octahedron.add_vertex(Point(0, 1, 0));
 
-    std::vector<Polygon_mesh::Vertex_index> face_octa_vertices = {v0_octo, v1_octo, v2_octo};
-    octahedron.add_face(face_octa_vertices);
+    std::vector<Polygon_mesh::Vertex_index> faceOctaVertices = {v0_octo, v1_octo, v2_octo};
+    octahedron.add_face(faceOctaVertices);
 
     //empty triangles
     std::map<std::string, std::array<Point, 3>> triangles;
 
     // Map to store the barycentric coordinates
-    std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> barycentric_coordinates;
+    std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> barycentricCoordinates;
 
     // Create a meshUtility object and compute barycentric coordinates
     meshUtility meshUtil;
-    meshUtil.computeBarycentric_coordinates(polygon, octahedron, triangles, barycentric_coordinates);
+    meshUtil.computeBarycentricCoordinates(polygon, octahedron, triangles, barycentricCoordinates);
 
 
     // Verify the barycentric coordinates map has an entry for "f0"
-    ASSERT_EQ(barycentric_coordinates.size(), 1);
+    ASSERT_EQ(barycentricCoordinates.size(), 1);
 
-    const auto &coords_vector = barycentric_coordinates["0"];
-    ASSERT_EQ(coords_vector.size(), 5); 
+    const auto &coordsVector = barycentricCoordinates["0"];
+    ASSERT_EQ(coordsVector.size(), 5); 
 
-    std::array<double, 3> bary_coords_1, bary_coords_2;
-    double distance_1, distance_2;
+    std::array<double, 3> baryCoords1, baryCoords2;
+    double distance1, distance2;
 
 
     // Find the barycentric coordinates for the test points
-    for (const auto &[vertex_id, bary_coords, distance] : coords_vector) {
-        if (vertex_id == 3) {
-            bary_coords_1 = bary_coords;
-            distance_1 = distance;
-        } else if (vertex_id == 4) {
-            bary_coords_2 = bary_coords;
-            distance_2 = distance;
+    for (const auto &[vertexID, baryCoords, distance] : coordsVector) {
+        if (vertexID == 3) {
+            baryCoords1 = baryCoords;
+            distance1 = distance;
+        } else if (vertexID == 4) {
+            baryCoords2 = baryCoords;
+            distance2 = distance;
         }
     }
 
     // Validate barycentric coordinates for the first point (0.25, 0.25, 0)
-    EXPECT_NEAR(bary_coords_1[0], 0.5, 1e-6);
-    EXPECT_NEAR(bary_coords_1[1], 0.25, 1e-6);
-    EXPECT_NEAR(bary_coords_1[2], 0.25, 1e-6);
-    EXPECT_NEAR(distance_1, 0.0, 1e-6);
+    EXPECT_NEAR(baryCoords1[0], 0.5, 1e-6);
+    EXPECT_NEAR(baryCoords1[1], 0.25, 1e-6);
+    EXPECT_NEAR(baryCoords1[2], 0.25, 1e-6);
+    EXPECT_NEAR(distance1, 0.0, 1e-6);
 
     // Validate barycentric coordinates for the second point (0.75, 0.25, 0)
-    EXPECT_NEAR(bary_coords_2[0], 0.0, 1e-6);
-    EXPECT_NEAR(bary_coords_2[1], 0.75, 1e-6);
-    EXPECT_NEAR(bary_coords_2[2], 0.25, 1e-6);
-    EXPECT_NEAR(distance_2, 0.0, 1e-6); 
+    EXPECT_NEAR(baryCoords2[0], 0.0, 1e-6);
+    EXPECT_NEAR(baryCoords2[1], 0.75, 1e-6);
+    EXPECT_NEAR(baryCoords2[2], 0.25, 1e-6);
+    EXPECT_NEAR(distance2, 0.0, 1e-6); 
 }
 

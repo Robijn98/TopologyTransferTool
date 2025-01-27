@@ -10,7 +10,7 @@ TEST(Curve, loadCurve) {
     std::vector<Point> validCurve;   
     std::vector<Point> invalidCurve;   
 
-    EXPECT_TRUE(curve.loadCurve("files/deformed_sphere_line.obj", validCurve));
+    EXPECT_TRUE(curve.loadCurve("files/deformedSphereLine.obj", validCurve));
     EXPECT_FALSE(validCurve.empty());
 
     EXPECT_FALSE(curve.loadCurve("files/doesntexist.obj", invalidCurve));
@@ -24,7 +24,7 @@ TEST(Curve, DiscretizeCurve) {
     std::vector<Point> curveIn;   
     std::vector<Point> curveOut;   
 
-    curve.loadCurve("files/deformed_sphere_line.obj", curveIn);
+    curve.loadCurve("files/deformedSphereLine.obj", curveIn);
     curve.discretizeCurve(curveIn, curveOut, 20);
     EXPECT_EQ(curveOut.size(), 20);
 }
@@ -39,8 +39,8 @@ TEST(Curve, ProjectPoints)
     std::vector<Point> curveOutTarget;   
     std::vector<Point> curveOut;   
 
-    curve.loadCurve("files/deformed_sphere_line.obj", curveTarget);
-    curve.loadCurve("files/normal_sphere_export.obj", curveSource);
+    curve.loadCurve("files/deformedSphereLine.obj", curveTarget);
+    curve.loadCurve("files/sphere.obj", curveSource);
     curve.discretizeCurve(curveSource, curveOutSource, 5);
     curve.discretizeCurve(curveTarget, curveOutTarget, 5);
     curve.projectPoints(curveOutSource, curveOutTarget, curveOut);

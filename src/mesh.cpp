@@ -6,7 +6,6 @@
 #include <iterator>
 
 
-
 bool Mesh::loadMesh(std::string filename, Polygon_mesh &polygon)
 {
   //check if file is empty
@@ -79,7 +78,7 @@ bool Mesh::validateMesh(Polygon_mesh &polygon)
       num_vertices++;
     }
     if (num_vertices != 3 && num_vertices != 4) {
-      std::cout << "face " << f << " is not a triangle or a quad\n";
+      std::cout << "face " << f << " is not a triangle or a quad.\n";
       return 0;
     }
   }
@@ -112,7 +111,7 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
   }
 
 
-  std::ofstream file("vertex_colors.txt");
+  std::ofstream file("vertexColors.txt");
   if(!file)
   {
     std::cerr << "Error opening file vertex colors\n";
@@ -120,18 +119,18 @@ void Mesh::triangulateMesh(Polygon_mesh &polygon)
   }
 
 //find the furthest point
-double furthest_distance = 0;
+double furthestDistance = 0;
 for(vertex_descriptor v : vertices(polygon))
 {
   Point p = outputMesh.point(v);
-  Point p_org = polygon.point(v);
+  Point pOrg = polygon.point(v);
 
     // Calculate the squared distance between points
-    double distance = CGAL::squared_distance(p, p_org);
+    double distance = CGAL::squared_distance(p, pOrg);
 
     // Update the furthest point if this distance is greater
-    if (distance > furthest_distance) {
-        furthest_distance = distance;
+    if (distance > furthestDistance) {
+        furthestDistance = distance;
     }
   }
 
@@ -141,18 +140,18 @@ for(vertex_descriptor v : vertices(polygon))
   for(vertex_descriptor v : vertices(polygon))
   {
       Point p = outputMesh.point(v);
-      Point p_org = polygon.point(v);
+      Point pOrg = polygon.point(v);
 
 
-      double distance = CGAL::squared_distance(p, p_org);
+      double distance = CGAL::squared_distance(p, pOrg);
       double ratio;
-      if(furthest_distance < 0.0001)
+      if(furthestDistance < 0.0001)
       {
           ratio = 0;
       }
       else
       {
-          ratio = distance / furthest_distance;
+          ratio = distance / furthestDistance;
       }
       if(ratio >= 0.0 && ratio < 0.2)
       {

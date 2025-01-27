@@ -80,7 +80,7 @@ void NGLScene::buildVAO()
   Mesh mesh;
   Polygon_mesh polygonSource;
   mesh.loadMesh("files/output.obj", polygonSource);
-  std::vector<std::array<float, 3>> vertexColors = mesh.getVertexColors("vertex_colors.txt");
+  std::vector<std::array<float, 3>> vertexColors = mesh.getVertexColors("vertexColors.txt");
   std::vector<ngl::Vec3> interleavedData = mesh.interleavePosAndColor(polygonSource, vertexColors);
 
     

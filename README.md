@@ -68,7 +68,7 @@ tresholds might be needed.
 
 <!-- class-diagram -->
 ## Class diagram
-![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/class_diagram/class_diagram.png)
+![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/classDiagram/classDiagram.png)
 
 
 <!-- ACKNOWLEDGMENTS -->

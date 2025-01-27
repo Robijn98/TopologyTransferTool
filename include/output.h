@@ -1,3 +1,8 @@
+/// header file encapsulates the struct Output, which is used to write the mesh to an obj file and update the obj file with the wrapped points.
+/// author: Robin van den Eerenbeemd
+/// version: 1.0
+/// date: 27 jan 2025 updated to NCCA coding standards
+
 #ifndef OUTPUT_H_
 #define OUTPUT_H_
 
@@ -20,4 +25,4 @@ struct Output
 };  
 
 
-#endif
+#endif //_OUTPUT_H_

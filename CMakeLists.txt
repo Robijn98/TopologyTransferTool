@@ -107,22 +107,22 @@ gtest_discover_tests(allTests)
 
 
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/test_files)
+if(EXISTS ${CMAKE_SOURCE_DIR}/testFiles)
     # Directory exists, proceed with copying files
-    message(STATUS "DIRECTORY 'test_files' EXISTS. Proceeding with setup.")
+    message(STATUS "DIRECTORY 'testFiles' EXISTS. Proceeding with setup.")
 
     # Custom target to create the directory and copy test files
     add_custom_target(
         CopyTestfiles ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/files
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/test_files
+                ${CMAKE_SOURCE_DIR}/testFiles
                 ${CMAKE_BINARY_DIR}/files
         COMMENT "Copying test files to ${CMAKE_BINARY_DIR}/files"
     )
 else()
     # Directory does not exist, skip setup
-    message(WARNING "DIRECTORY 'test_files' DOES NOT EXIST. Skipping setup.")
+    message(WARNING "DIRECTORY 'testFiles' DOES NOT EXIST. Skipping setup.")
 endif()
 
 # Add the dependency for curveTests

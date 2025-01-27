@@ -27,7 +27,7 @@ class "Class Curve" {
 }
 
 class "Class MeshUtility (singleton)" {
-    - Compute_barycentric_coordinates()
+    - Compute_barycentricCoordinates()
     - Divide_mesh_for_baricentric()
     - wrap_patch_layout()
 }

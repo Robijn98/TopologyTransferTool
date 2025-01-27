@@ -1,3 +1,9 @@
+/// header file encapsulates the class NGLScene, which is used to draw the mesh in the viewer.
+/// author: Jon Macey with edits by Robin van den Eerenbeemd
+/// version: 1.0
+/// date: 27 jan 2025 updated to NCCA coding standards
+
+
 #ifndef NGLSCENE_H_
 #define NGLSCENE_H_
 #include <ngl/AbstractVAO.h>
@@ -7,18 +13,6 @@
 #include <QOpenGLWindow>
 #include <memory>
 
-//----------------------------------------------------------------------------------------------------------------------
-/// @file NGLScene.h
-/// @brief this class inherits from the Qt OpenGLWindow and allows us to use NGL to draw OpenGL
-/// @author Jonathan Macey
-/// @version 1.0
-/// @date 10/9/13
-/// Revision History :
-/// This is an initial version used for the new NGL6 / Qt 5 demos
-/// @class NGLScene
-/// @brief our main glwindow widget for NGL applications all drawing elements are
-/// put in this file
-//----------------------------------------------------------------------------------------------------------------------
 
 class NGLScene : public QOpenGLWindow
 {
@@ -106,4 +100,4 @@ private:
 
 
 
-#endif
+#endif // _NGLSCENE_H_

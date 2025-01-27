@@ -21,11 +21,10 @@
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Point_3 = Kernel::Point_3;
-using Triangle_3 = Kernel::Triangle_3;
-using Surface_mesh = CGAL::Surface_mesh<Point_3>;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Triangle_3 Triangle_3;
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_Traits;
@@ -36,51 +35,51 @@ typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
-std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double z_threshold, double y_threshold)
+std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentricComputing(Polygon_mesh &polygon, Polygon_mesh &debugMesh, double zThreshold, double yThreshold)
 {
     // Step 1: Cut the mesh along the XY plane
-    std::vector<Point> xy_midline_points;
+    std::vector<Point> xyMidlinePoints;
 
     for (vertex_descriptor v : vertices(polygon)) {
-        Point vertex_point = get(CGAL::vertex_point, polygon, v);
+        Point vertexPoint = get(CGAL::vertex_point, polygon, v);
         
         // If the vertex is near the XY plane its Z-coordinate is close to 0
-        if (std::fabs(vertex_point.z()) < z_threshold) {
-            xy_midline_points.push_back(vertex_point);
+        if (std::fabs(vertexPoint.z()) < zThreshold) {
+            xyMidlinePoints.push_back(vertexPoint);
         }
     }
 
 
     // Step 2: Cut the mesh along the XZ plane
-    std::vector<Point> xz_midline_points;
+    std::vector<Point> xzMidlinePoints;
 
     for (vertex_descriptor v : vertices(polygon)) {
-        Point vertex_point = get(CGAL::vertex_point, polygon, v);
+        Point vertexPoint = get(CGAL::vertex_point, polygon, v);
         
         // If the vertex is near the XZ plane its Y-coordinate is close to 0
-        if (std::fabs(vertex_point.y()) < y_threshold) {
-            xz_midline_points.push_back(vertex_point);
+        if (std::fabs(vertexPoint.y()) < yThreshold) {
+            xzMidlinePoints.push_back(vertexPoint);
         }
     }
 
     //step 3: divide quads into triangles
-    std::vector<Point> intersection_points;
+    std::vector<Point> intersectionPoints;
     double threshold = 1e-6;
-    int max_threshold = 1;
+    int maxThreshold = 1;
 
-    while(intersection_points.size() != 2 && threshold < max_threshold)
+    while(intersectionPoints.size() != 2 && threshold < maxThreshold)
     {
 
-        for(const auto& point: xy_midline_points)
+        for(const auto& point: xyMidlinePoints)
         {
             //find the intersections with the xz midline within a small theshold
-            for(const auto& point2: xz_midline_points)
+            for(const auto& point2: xzMidlinePoints)
             {
                 if(std::fabs(point.z() - point2.z()) < threshold 
                 && std::fabs(point.y() - point2.y()) < threshold
                 && std::fabs(point.x() - point2.x()) < threshold)
                 {
-                intersection_points.push_back(point);
+                intersectionPoints.push_back(point);
 
                 }
             }
@@ -92,7 +91,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     //split up the lines xymidline using the intersection points and put back the points into a new vector
     
     // Sort intersection points to ensure consistent ordering
-    std::sort(intersection_points.begin(), intersection_points.end(), 
+    std::sort(intersectionPoints.begin(), intersectionPoints.end(), 
         [](const Point& a, const Point& b) {
             if (a.x() != b.x()) return a.x() < b.x();
             if (a.y() != b.y()) return a.y() < b.y();
@@ -100,84 +99,84 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
         });
     
     
-    Point intersection1 = intersection_points[0];
-    Point intersection2 = intersection_points[1];
+    Point intersection1 = intersectionPoints[0];
+    Point intersection2 = intersectionPoints[1];
 
 
     // Step 3: Split XY midline
-    std::vector<Point> top_xy_points;
-    for (const auto &point : xy_midline_points) {
+    std::vector<Point> xyTopPoints;
+    for (const auto &point : xyMidlinePoints) {
 
         if (point.y() >= intersection1.y())
             {
-            top_xy_points.push_back(point);
+            xyTopPoints.push_back(point);
             }
     }
 
 
-    std::vector<Point> bottom_xy_points;
-    for (const auto &point : xy_midline_points) {
+    std::vector<Point> xyBottomPoints;
+    for (const auto &point : xyMidlinePoints) {
 
         if (point.y() <= intersection1.y())
             {
-            bottom_xy_points.push_back(point);
+            xyBottomPoints.push_back(point);
             }
     }
 
 
     // Step 4: split XZ midline using the intersection points and put back the points into a new vector
-    std::vector<Point> right_xz_points;
-    for (const auto &point : xz_midline_points) {
+    std::vector<Point> xzRightPoints;
+    for (const auto &point : xzMidlinePoints) {
 
         if (point.z() >= intersection1.z())
             {
-            right_xz_points.push_back(point);
+            xzRightPoints.push_back(point);
             }
     }
 
 
-    std::vector<Point> left_xz_points;
-    for( const auto &point : xz_midline_points) {
+    std::vector<Point> xzLeftPoints;
+    for( const auto &point : xzMidlinePoints) {
 
         if (point.z() <= intersection1.z())
             {
-            left_xz_points.push_back(point);
+            xzLeftPoints.push_back(point);
             }
     }
 
 
     //Step 5: create the actual triangles from the points
     
-    std::sort(right_xz_points.begin(), right_xz_points.end(), 
+    std::sort(xzRightPoints.begin(), xzRightPoints.end(), 
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
-    Point_3 midpoint_right_xz = right_xz_points[right_xz_points.size() / 2];
+    Point_3 midpointRightXZ = xzRightPoints[xzRightPoints.size() / 2];
 
     
-    std::sort(bottom_xy_points.begin(), bottom_xy_points.end(), 
+    std::sort(xyBottomPoints.begin(), xyBottomPoints.end(), 
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
-    Point_3 midpoint_bottom_xy = bottom_xy_points[bottom_xy_points.size() / 2];
+    Point_3 midpointBottomXY = xyBottomPoints[xyBottomPoints.size() / 2];
     
     
-    std::sort(left_xz_points.begin(), left_xz_points.end(), 
+    std::sort(xzLeftPoints.begin(), xzLeftPoints.end(), 
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
-    Point_3 midpoint_left_xz = left_xz_points[left_xz_points.size() / 2];
+    Point_3 midpointLeftXZ = xzLeftPoints[xzLeftPoints.size() / 2];
     
     
-    std::sort(top_xy_points.begin(), top_xy_points.end(), 
+    std::sort(xyTopPoints.begin(), xyTopPoints.end(), 
     [](const Point& a, const Point& b) { return a.x() < b.x(); });
-    Point_3 midpoint_top_xy = top_xy_points[top_xy_points.size() / 2];
+    Point_3 midpointTopXY = xyTopPoints[xyTopPoints.size() / 2];
 
 
     //create dictionary for triangles to be used for barycentric coordinates
     std::map<std::string, std::array<Point, 3>> triangles; 
-    triangles["triangle1"] = {midpoint_bottom_xy, midpoint_right_xz, intersection1};
-    triangles["triangle2"] = {midpoint_right_xz, midpoint_bottom_xy, intersection2};
-    triangles["triangle3"] = {midpoint_top_xy, midpoint_left_xz, intersection1};
-    triangles["triangle4"] = {midpoint_left_xz, midpoint_top_xy, intersection2};
-    triangles["triangle5"] = {midpoint_right_xz, midpoint_top_xy, intersection1};
-    triangles["triangle6"] = {midpoint_top_xy, midpoint_right_xz, intersection2};
-    triangles["triangle7"] = {midpoint_left_xz, midpoint_bottom_xy, intersection1};
-    triangles["triangle8"] = {midpoint_bottom_xy, midpoint_left_xz, intersection2};
+    triangles["triangle1"] = {midpointBottomXY, midpointRightXZ, intersection1};
+    triangles["triangle2"] = {midpointRightXZ, midpointBottomXY, intersection2};
+    triangles["triangle3"] = {midpointTopXY, midpointLeftXZ, intersection1};
+    triangles["triangle4"] = {midpointLeftXZ, midpointTopXY, intersection2};
+    triangles["triangle5"] = {midpointRightXZ, midpointTopXY, intersection1};
+    triangles["triangle6"] = {midpointTopXY, midpointRightXZ, intersection2};
+    triangles["triangle7"] = {midpointLeftXZ, midpointBottomXY, intersection1};
+    triangles["triangle8"] = {midpointBottomXY, midpointLeftXZ, intersection2};
 
     //turn points into faces    
     for(const auto& triangle : triangles) 
@@ -191,9 +190,9 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
     //scale up the cage to be bigger than the original mesh
     for(vertex_descriptor v : vertices(debugMesh))
     {
-        Point vertex_point = get(CGAL::vertex_point, debugMesh, v);
-        vertex_point = Point(vertex_point.x() * 2.5, vertex_point.y() * 2.5, vertex_point.z() * 2.5);
-        put(CGAL::vertex_point, debugMesh, v, vertex_point);
+        Point vertexPoint = get(CGAL::vertex_point, debugMesh, v);
+        vertexPoint = Point(vertexPoint.x() * 2.5, vertexPoint.y() * 2.5, vertexPoint.z() * 2.5);
+        put(CGAL::vertex_point, debugMesh, v, vertexPoint);
     }
 
 
@@ -204,7 +203,7 @@ std::map<std::string, std::array<Point, 3>> meshUtility::divideMeshForBarycentri
 
 
 
-void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinates)
+void meshUtility::computeBarycentricCoordinates(Polygon_mesh &polygon, Polygon_mesh &octahedron ,std::map<std::string, std::array<Point, 3>> triangles, std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentricCoordinates)
 {
     Mesh mesh; 
     mesh.triangulateMesh(polygon);
@@ -212,71 +211,71 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
     // Create an AABB tree for the octahedron
     AABB_Tree tree(faces(octahedron).first, faces(octahedron).second, octahedron);
 
-    std::set<vertex_descriptor> processed_vertices;
-    std::map<vertex_descriptor, Polygon_mesh::Face_index> closest_face_map;
+    std::set<vertex_descriptor> processedVertices;
+    std::map<vertex_descriptor, Polygon_mesh::Face_index> closestFaceMap;
 
     // First, find the closest face for each vertex in the polygon mesh
     for (vertex_descriptor v : vertices(polygon)) {
         Point P = get(CGAL::vertex_point, polygon, v);
         
-        auto closest_face = tree.closest_point_and_primitive(P);
-        closest_face_map[v] = closest_face.second;  
+        auto closestFace = tree.closest_point_and_primitive(P);
+        closestFaceMap[v] = closestFace.second;  
     }
 
     for (vertex_descriptor v : vertices(polygon)) 
     {
 
         // Get the closest face for the current vertex
-        Polygon_mesh::Face_index closest_face_descriptor = closest_face_map[v];
+        Polygon_mesh::Face_index closestFaceDescriptor = closestFaceMap[v];
         
         // Get the halfedge descriptor for the closest face
-        auto halfedge_descriptor = halfedge(closest_face_descriptor, octahedron);
-        auto vertices_around = vertices_around_face(halfedge_descriptor, octahedron);
+        auto halfedge_descriptor = halfedge(closestFaceDescriptor, octahedron);
+        auto verticesAround = vertices_around_face(halfedge_descriptor, octahedron);
 
         // Get the vertices of the closest face
-        auto vertex_iter = vertices_around.begin();
-        Point A = get(CGAL::vertex_point, octahedron, *vertex_iter);
-        vertex_iter++;
-        Point B = get(CGAL::vertex_point, octahedron, *vertex_iter);
-        vertex_iter++;
-        Point C = get(CGAL::vertex_point, octahedron, *vertex_iter);
+        auto vertexIter = verticesAround.begin();
+        Point A = get(CGAL::vertex_point, octahedron, *vertexIter);
+        vertexIter++;
+        Point B = get(CGAL::vertex_point, octahedron, *vertexIter);
+        vertexIter++;
+        Point C = get(CGAL::vertex_point, octahedron, *vertexIter);
 
         // Compute the plane of the triangle defined by vertices A, B, C
         CGAL::Plane_3<Kernel> plane(A, B, C);
-        double area_ABC = CGAL::sqrt(CGAL::squared_area(A, B, C));
-        std::array<double, 3> bary_coords;
+        double areaABC = CGAL::sqrt(CGAL::squared_area(A, B, C));
+        std::array<double, 3> baryCoords;
 
         // Project the point onto the plane
-        Point P_orginal = get(CGAL::vertex_point, polygon, v);
-        Point P_projected;
-        double distance_to_plane;
+        Point pOrginal = get(CGAL::vertex_point, polygon, v);
+        Point pProjected;
+        double distanceToPlane;
 
-        bool valid_bary_coords = false;
-        int max_iterations = 3;
+        bool validBaryCoords = false;
+        int maxIterations = 3;
         int iteration = 0;
 
 
-        while(!valid_bary_coords && iteration < max_iterations)
+        while(!validBaryCoords && iteration < maxIterations)
         {
             
-            P_projected = plane.projection(P_orginal);
-            distance_to_plane = CGAL::sqrt(CGAL::squared_distance(P_orginal, P_projected));
+            pProjected = plane.projection(pOrginal);
+            distanceToPlane = CGAL::sqrt(CGAL::squared_distance(pOrginal, pProjected));
 
             // Calculate areas for barycentric coordinates
-            double area_PBC = CGAL::sqrt(CGAL::squared_area(P_projected, B, C));
-            double area_PCA = CGAL::sqrt(CGAL::squared_area(P_projected, C, A));
-            double area_PAB = CGAL::sqrt(CGAL::squared_area(P_projected, A, B));
+            double areaPBC = CGAL::sqrt(CGAL::squared_area(pProjected, B, C));
+            double areaPCA = CGAL::sqrt(CGAL::squared_area(pProjected, C, A));
+            double areaPAB = CGAL::sqrt(CGAL::squared_area(pProjected, A, B));
 
             // Barycentric coordinates
-            double u_bary = area_PBC / area_ABC;
-            double v_bary = area_PCA / area_ABC;
-            double w_bary = area_PAB / area_ABC;
+            double uBary = areaPBC / areaABC;
+            double vBary = areaPCA / areaABC;
+            double wBary = areaPAB / areaABC;
 
             // Check if the barycentric coordinates are valid (non-negative and sum to 1)
-            if (u_bary >= -1e-3  && v_bary >= -1e-6  && w_bary >= -1e-6 && std::abs(u_bary + v_bary + w_bary - 1) < 1e-6)
+            if (uBary >= -1e-3  && vBary >= -1e-6  && wBary >= -1e-6 && std::abs(uBary + vBary + wBary - 1) < 1e-6)
             {
-                valid_bary_coords = true;
-                bary_coords = {u_bary, v_bary, w_bary};
+                validBaryCoords = true;
+                baryCoords = {uBary, vBary, wBary};
             }
             else
             {
@@ -297,7 +296,7 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
                     factor2 = scale - factor2;
                 }
 
-                P_orginal = P_orginal + factor1 * edge1 + factor2 * edge2;
+                pOrginal = pOrginal + factor1 * edge1 + factor2 * edge2;
             }
 
             iteration++;
@@ -306,11 +305,11 @@ void meshUtility::computeBarycentric_coordinates(Polygon_mesh &polygon, Polygon_
         
         //convert the closest face descriptor to a string
         // Check if the barycentric coordinates are valid (non-negative and sum to 1)
-        if (valid_bary_coords)
+        if (validBaryCoords)
         {
-            std::string closest_face_descriptor_str = std::to_string(closest_face_descriptor);
-            barycentric_coordinates[closest_face_descriptor_str].emplace_back(v, bary_coords, distance_to_plane);
-            processed_vertices.insert(v);  
+            std::string closestFaceDescriptorString = std::to_string(closestFaceDescriptor);
+            barycentricCoordinates[closestFaceDescriptorString].emplace_back(v, baryCoords, distanceToPlane);
+            processedVertices.insert(v);  
         }
         else
         {
@@ -338,24 +337,24 @@ Point operator+(const Point& p1, const Point& p2)
 
 
 
-std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh ,std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentric_coordinatesSource)
+std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octahedronSource, Polygon_mesh octahedronTarget, Polygon_mesh &sourceMesh ,std::map<std::string, std::vector<std::tuple<int, std::array<double, 3>, double>>> &barycentricCoordinatesSource)
 {
 
     std::map<int, std::vector<Point>> WrappedPoints;
 
-    for(const auto &[face_id, bary_coords]: barycentric_coordinatesSource)
+    for(const auto &[faceID, baryCoords]: barycentricCoordinatesSource)
     {
-        Polygon_mesh::Face_index target_face = Polygon_mesh::Face_index(std::stoi(face_id));
-        auto halfedge_descriptor = halfedge(target_face, octahedronTarget);
-        auto vertices_around = vertices_around_face(halfedge_descriptor, octahedronTarget);
+        Polygon_mesh::Face_index targetFace = Polygon_mesh::Face_index(std::stoi(faceID));
+        auto halfedge_descriptor = halfedge(targetFace, octahedronTarget);
+        auto verticesAround = vertices_around_face(halfedge_descriptor, octahedronTarget);
 
         //get points target triangle
-        auto vertex_iter = vertices_around.begin();
-        Point A = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
-        vertex_iter++;
-        Point B = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
-        vertex_iter++;
-        Point C = get(CGAL::vertex_point, octahedronTarget, *vertex_iter);
+        auto vertexIter = verticesAround.begin();
+        Point A = get(CGAL::vertex_point, octahedronTarget, *vertexIter);
+        vertexIter++;
+        Point B = get(CGAL::vertex_point, octahedronTarget, *vertexIter);
+        vertexIter++;
+        Point C = get(CGAL::vertex_point, octahedronTarget, *vertexIter);
 
         //calculating the normal of the target triangle
         Vector_3 normal = CGAL::cross_product(B - A, C - A);
@@ -363,16 +362,16 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
 
 
         //process each vertex in the source
-        for(const auto &[vertex_id, bary_coords, distance]: bary_coords)
+        for(const auto &[vertexID, baryCoords, distance]: baryCoords)
         {
-            double u = bary_coords[0];
-            double v = bary_coords[1];
-            double w = bary_coords[2];
+            double u = baryCoords[0];
+            double v = baryCoords[1];
+            double w = baryCoords[2];
 
-            Point wrapped_point = u * A + v * B + w * C;
-            wrapped_point = wrapped_point - distance * normal;
+            Point wrappedPoint = u * A + v * B + w * C;
+            wrappedPoint = wrappedPoint - distance * normal;
 
-            WrappedPoints[vertex_id].push_back(wrapped_point);
+            WrappedPoints[vertexID].push_back(wrappedPoint);
         }
     }
 
@@ -383,7 +382,9 @@ std::map<int, std::vector<Point>> meshUtility::initialWrapping(Polygon_mesh octa
     return WrappedPoints;
 }
 
-
+// CGAL libary, 2023, Polygon_mesh_processing/shape_smoothing_example.cpp, Available from:
+// https://doc.cgal.org/latest/Polygon_mesh_processing/Polygon_mesh_processing_2shape_smoothing_example_8cpp-example.html
+// was used as a reference for the following function
 void meshUtility::relaxMesh(Polygon_mesh &polygon)
 {
     //constraint edges with a dihedral angle over 60 degrees

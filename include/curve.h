@@ -1,3 +1,9 @@
+/// header file encapsulates the class Curve, which is used to load, discretize and project curves.
+/// author: Robin van den Eerenbeemd
+/// version: 1.0
+/// date: 27 jan 2025 updated to NCCA coding standards
+
+
 #ifndef _CURVE_H_
 #define _CURVE_H_
 
@@ -11,8 +17,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                Point;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polygon_mesh;
-namespace PMP = CGAL::Polygon_mesh_processing;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 class Curve
 {
@@ -29,4 +35,4 @@ class Curve
 };
 
 
-#endif 
+#endif  //_CURVE_H_

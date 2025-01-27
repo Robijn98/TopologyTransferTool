@@ -1,3 +1,9 @@
+/// header file encapsulates the struct WinParams, which is used to store the window parameters.
+/// author: Jon Macey with edits by Robin van den Eerenbeemd
+/// version: 1.0
+/// date: 27 jan 2025 updated to NCCA coding standards
+
+
 #ifndef WINDOWPARAMS_H_
 #define WINDOWPARAMS_H_
 
@@ -55,4 +61,4 @@ constexpr float INCREMENT=0.01f;
 //----------------------------------------------------------------------------------------------------------------------
 constexpr float ZOOM=0.1f;
 
-#endif
+#endif //_WINDOWPARAMS_H_

@@ -1,3 +1,8 @@
+/// header file encapsulates the class Mesh, which is used to load, validate and assign colors to a mesh.
+/// author: Robin van den Eerenbeemd
+/// version: 1.0
+/// date: 27 jan 2025 updated to NCCA coding standards
+
 #ifndef MESH_H_
 #define MESH_H_
 
@@ -14,14 +19,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef Kernel::Point_3                Point;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Polygon_mesh;
-namespace PMP = CGAL::Polygon_mesh_processing;
 typedef boost::graph_traits<Polygon_mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polygon_mesh>::halfedge_descriptor               halfedge_descriptor;
 typedef Kernel::Vector_3 Vector_3;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 
 class Mesh
@@ -43,5 +48,5 @@ private:
     std::string filename;
 };
 
-#endif 
+#endif // _MESH_H_
 
