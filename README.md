@@ -71,6 +71,12 @@ tresholds might be needed.
 ![class diagram](https://github.com/NCCA/programming-project-Robijn98/blob/main/classDiagram/classDiagram.png)
 
 
+<!-- RESULT PIC -->
+## Result picture
+![result pic](https://github.com/NCCA/programming-project-Robijn98/blob/main/images/resultPic.png)
+
+
+
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 ChatGPT was used for debugging 
