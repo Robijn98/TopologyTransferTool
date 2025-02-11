@@ -44,7 +44,7 @@ To run you will need to following
 ### Installation
 Clone the repo
    ```sh
-   git clone https://github.com/NCCA/programming-project-Robijn98.git
+   git clone git@github.com:Robijn98/TopologyTransferTool.git
    ```
 <!-- USAGE EXAMPLES -->
 ## Usage
