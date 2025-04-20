@@ -35,7 +35,7 @@ to preserve the relative positions of the vertices from the source when it's wra
 ## Getting Started
 ### Prerequisites
 
-To run you will need to following 
+To run you will need the following 
 - QT6 or QT5
 - CMake 3.12
 - CGAL 5.6.1
