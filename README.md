@@ -97,6 +97,7 @@ Ju, T. and Schaefer, S. and Warren, J.,  2005, Mean Value Coordinates for Closed
 Budninskiy, M. and Liu, B. and Tong, Y. and Desbrun, M.,  2017, Spectral Affine-Kernel Embeddings,  Eurographics Symposium on Geometry Processing, 36 (5)
 
 R. Vaillant, 2016, Laplacian smoothing (c++ code to smooth a mesh), Available from: https://rodolphe-vaillant.fr/entry/70/laplacian-smoothing-c-code-to-smooth-a-mesh
+
 O. Drew, 2025, Best read me template, Available from: https://github.com/othneildrew/Best-README-Template/blob/main/README.md#roadmap
 
 
